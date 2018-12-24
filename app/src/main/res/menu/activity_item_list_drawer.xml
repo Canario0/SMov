@@ -7,22 +7,26 @@
         <item
             android:id="@+id/add_item"
             android:icon="@drawable/ic_add_box"
-            android:title="Añadir Elemento" />
+            android:title="Añadir Elemento"
+            android:checkable="true"/>
         <item
             android:id="@+id/search_member"
             android:icon="@drawable/ic_search"
-            android:title="Buscar Miembro" />
+            android:title="Buscar Miembro"
+            android:checkable="true"/>
 
         <item android:title="Prestamos">
             <menu>
                 <item
                     android:id="@+id/new_checkouts"
                     android:icon="@drawable/ic_hourglass_empty"
-                    android:title="Nuevos" />
+                    android:title="Nuevos"
+                    android:checkable="true"/>
                 <item
                     android:id="@+id/close_to_end_checkouts"
                     android:icon="@drawable/ic_hourglass_full"
-                    android:title="Próximos a Vencer" />
+                    android:title="Próximos a Vencer"
+                    android:checkable="true"/>
             </menu>
         </item>
     </group>
