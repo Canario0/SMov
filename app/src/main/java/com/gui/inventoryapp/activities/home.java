@@ -1,9 +1,7 @@
-package com.gui.inventoryapp;
+package com.gui.inventoryapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,9 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class item_list extends AppCompatActivity
+import com.gui.inventoryapp.R;
+
+public class home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private TextView my_text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +33,6 @@ public class item_list extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        my_text= findViewById(R.id.text_example);
     }
 
     @Override
@@ -63,6 +61,7 @@ public class item_list extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
@@ -76,15 +75,9 @@ public class item_list extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.add_item) {
-            // Handle the camera action
-            my_text.setText("Hello from Añadir Elemento");
         } else if (id == R.id.search_member) {
-            my_text.setText("Hello from Buscar Elemento");
         } else if (id == R.id.new_checkouts) {
-            my_text.setText("Hello from Nuevos Prestamos");
         } else if (id == R.id.close_to_end_checkouts) {
-            my_text.setText("Hello from Proximos a Vencer");
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
