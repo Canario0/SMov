@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Inventory App</string>
+    <string name="app_name">GUInventory App</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">GUI Inventory APP</string>
+    <string name="nav_header_title">GUInventory APP</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">End Point</string>
 </resources>
