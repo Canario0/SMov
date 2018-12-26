@@ -13,9 +13,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.gui.inventoryapp.R;
+import com.gui.inventoryapp.fragments.ItemList;
 
 public class home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private DrawerLayout drawer;
+    private int current_selected;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +27,7 @@ public class home extends AppCompatActivity
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -33,11 +36,21 @@ public class home extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        if (savedInstanceState == null) {
+            // Crear un fragment
+            ItemList fragment = new ItemList();
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.content, fragment,
+                            fragment.getClass().getSimpleName())
+                    .commit();
+            current_selected = R.id.item_list;
+        }
+
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -74,7 +87,20 @@ public class home extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.add_item) {
+        if(id == R.id.item_list){
+            if(current_selected != R.id.item_list) {
+                ItemList fragment = new ItemList();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(android.R.id.content, fragment,
+                                fragment.getClass().getSimpleName())
+                        .commit();
+                current_selected = R.id.item_list;
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        }else if (id == R.id.add_item) {
+
         } else if (id == R.id.search_member) {
         } else if (id == R.id.new_checkouts) {
         } else if (id == R.id.close_to_end_checkouts) {

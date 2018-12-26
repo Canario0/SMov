@@ -2,32 +2,34 @@ package com.gui.inventoryapp.fragments;
 
 import android.app.ListFragment;
 import android.app.LoaderManager;
-import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.widget.ArrayAdapter;
+import android.util.Log;
+import android.view.View;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.gui.inventoryapp.R;
-import com.gui.inventoryapp.itemMock;
+import com.gui.inventoryapp.constant.ItemConstants;
 
 
 public class ItemList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = ItemList.class.getSimpleName();
     private SimpleCursorAdapter mAdapter;
-    private static final String[] FROM = {StatusContract.Column.USER,
-            StatusContract.Column.MESSAGE, StatusContract.Column.CREATED_AT};
-    private static final int[] TO = {R.id.list_item_text_user, R.id.list_item_text_message, R.id.list_item_text_created_at};
+    private static final String[] FROM = {ItemConstants.ITEM.BARCODE,
+            ItemConstants.ITEM.CONDITION};
+    private static final int[] TO = {R.id.item_barcode, R.id.item_condition};
     private static final int LOADER_ID = 42;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setEmptyText("Sin datos...");
-        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.list_item, null, FROM, TO, 0);
+        setEmptyText("Sin datos, registrar un nuvo elemento...");
+        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.item, null, FROM, TO, 0);
         mAdapter.setViewBinder(new TimelineViewBinder());
         setListAdapter(mAdapter);
         getLoaderManager().initLoader(LOADER_ID, null, this);
@@ -38,7 +40,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         if (i != LOADER_ID)
             return null;
         Log.d(TAG, "onCreateLoader");
-        return new CursorLoader(getActivity(), StatusContract.CONTENT_URI, null, null, null, StatusContract.DEFAULT_SORT);
+        return new CursorLoader(getActivity(), ItemConstants.CONTENT_URI, null, null, null, ItemConstants.DEFAULT_SORT);
     }
 
     @Override
@@ -53,18 +55,27 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         mAdapter.swapCursor(null);
     }
 
-    private class TimelineViewBinder implements SimpleCursorAdapter.ViewBinder {
+    class TimelineViewBinder implements SimpleCursorAdapter.ViewBinder {
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-            if (view.getId() != R.id.list_item_text_created_at)
+            if (view.getId() != R.id.item_condition)
                 return false;
-            // Convertimos el timestamp a tiempo relativo
-            long timestamp = cursor.getLong(columnIndex);
-            CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(timestamp);
-            ((TextView) view).setText(relativeTime);
+            switch (cursor.getInt(columnIndex)){
+                case -1:
+                    ((TextView) view).setTextColor(Color.parseColor("#DC3545"));
+                    ((TextView) view).setText("averiado");
+                    break;
+                case 0:
+                    ((TextView) view).setTextColor(Color.parseColor("#28A745"));
+                    ((TextView) view).setText("disponible");
+                    break;
+                case 1:
+                    ((TextView) view).setTextColor(Color.parseColor("#FFC107"));
+                    ((TextView) view).setText("prestado");
+                    break;
+            }
+
             return true;
         }
     }
-
-
 }
