@@ -13,15 +13,15 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.gui.inventoryapp.R;
-import com.gui.inventoryapp.constant.ItemConstants;
+import com.gui.inventoryapp.database.DatabaseConstants;
 
 
 public class ItemList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = ItemList.class.getSimpleName();
     private SimpleCursorAdapter mAdapter;
-    private static final String[] FROM = {ItemConstants.ITEM.BARCODE,
-            ItemConstants.ITEM.CONDITION};
+    private static final String[] FROM = {DatabaseConstants.Item.BARCODE,
+            DatabaseConstants.Item.DAMAGED};
     private static final int[] TO = {R.id.item_barcode, R.id.item_condition};
     private static final int LOADER_ID = 42;
 
@@ -40,7 +40,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         if (i != LOADER_ID)
             return null;
         Log.d(TAG, "onCreateLoader");
-        return new CursorLoader(getActivity(), ItemConstants.CONTENT_URI, null, null, null, ItemConstants.DEFAULT_SORT);
+        return new CursorLoader(getActivity(), DatabaseConstants.CONTENT_URI, null, null, null, DatabaseConstants.DEFAULT_SORT);
     }
 
     @Override

@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,18 +18,16 @@
             android:name=".activities.home"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity android:name=".activities.SettingsActivity" />
+        <activity android:name=".activities.TESTING">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.SettingsActivity" />
-
-        <provider
-            android:name="com.gui.inventoryapp.contentprovider.ItemProvider"
-            android:authorities="com.gui.inventoryapp.contentprovider.ItemProvider"
-            android:exported="false" />
     </application>
 
 </manifest>
