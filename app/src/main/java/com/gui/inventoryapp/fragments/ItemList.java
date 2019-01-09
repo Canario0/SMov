@@ -40,12 +40,17 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
+
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         if (i != LOADER_ID)
             return null;
         Log.d(TAG, "onCreateLoader");
-        return new CursorLoader(getActivity(), ItemConstants.CONTENT_URI, null, null, null, ItemConstants.DEFAULT_SORT);
+        if (bundle == null)
+            return new CursorLoader(getActivity(), ItemConstants.CONTENT_URI, null, null, null, ItemConstants.DEFAULT_SORT);
+        else
+            return new CursorLoader(getActivity(), ItemConstants.CONTENT_URI, null, bundle.getString("selection"), null, ItemConstants.DEFAULT_SORT);
     }
 
     @Override
@@ -67,12 +72,22 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
 
     }
 
+    public void update(String id) {
+        Bundle bundle = new Bundle();
+        bundle.putString("selection", ItemConstants.ITEM.BARCODE + " LIKE '" + id + "%'");
+        getLoaderManager().restartLoader(LOADER_ID, bundle, this);
+    }
+
+    public void reset() {
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
+    }
+
     class TimelineViewBinder implements SimpleCursorAdapter.ViewBinder {
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
             if (view.getId() != R.id.item_condition)
                 return false;
-            switch (cursor.getInt(columnIndex)){
+            switch (cursor.getInt(columnIndex)) {
                 case -1:
                     ((TextView) view).setTextColor(Color.parseColor("#DC3545"));
                     ((TextView) view).setText("averiado");
