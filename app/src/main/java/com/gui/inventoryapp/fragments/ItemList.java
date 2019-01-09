@@ -1,23 +1,29 @@
 package com.gui.inventoryapp.fragments;
 
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.constant.ItemConstants;
+
+import java.util.zip.Inflater;
 
 
 public class ItemList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
@@ -39,7 +45,6 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         getListView().setOnItemClickListener(this);
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
-
 
 
     @Override
@@ -65,10 +70,54 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         mAdapter.swapCursor(null);
     }
 
+    private void setDialogView(View aux, Cursor x) {
+        ((TextView) aux.findViewById(R.id.dialog_title)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.BARCODE)));
+        switch (x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))) {
+            case -1:
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))+ 1);
+                break;
+            case 0:
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))+ 1);
+                break;
+            case 1:
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))+ 1);
+                break;
+
+        }
+
+        ((TextView) aux.findViewById(R.id.added_date)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.ENTRY_DATE)));
+        ((TextView) aux.findViewById(R.id.book_end_date)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.CHECKOUT_EXPIRE_DATE)));
+        ((TextView) aux.findViewById(R.id.rent_user)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.GIVEN_TO)));
+        ((TextView) aux.findViewById(R.id.owner_name)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.OWNER)));
+
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Cursor x = (Cursor) this.getListAdapter().getItem(position);
         TextView v = view.findViewById(R.id.item_barcode);
-        Toast.makeText(getActivity(), "YEY MA BOY soy el item: " + position + " y contengo " + v.getText(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "YEY MA BOY soy el item: " + position + " y contengo " + v.getText(), Toast.LENGTH_SHORT).show();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        // set title
+        View aux = inflater.inflate(R.layout.item_dialog, null);
+        setDialogView(aux, x);
+        // set dialog message
+        alertDialogBuilder.setView(aux)
+                .setCancelable(true)
+                .setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
 
     }
 

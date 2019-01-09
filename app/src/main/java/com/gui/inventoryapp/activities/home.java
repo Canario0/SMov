@@ -55,11 +55,9 @@ public class home extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 SearchView search_bar = findViewById(R.id.search_bar);
-                if (search_bar.getQuery().length() != 0) {
-                    ItemList x = (ItemList) getFragmentManager().findFragmentByTag(current_fragment);
-                    x.reset();
-                    search_bar.setQuery("", false);
-                }
+                ItemList x = (ItemList) getFragmentManager().findFragmentByTag(current_fragment);
+                x.reset();
+                search_bar.setQuery("", false);
                 search_bar.clearFocus();
 
             }
