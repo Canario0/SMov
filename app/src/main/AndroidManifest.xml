@@ -28,6 +28,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="com.gui.inventoryapp.database.contentProviders.MemberProvider"
+            android:authorities="com.gui.inventoryapp.database.contentProviders.MemberProvider"
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -17,15 +17,15 @@ public class DatabaseConstants {
     public static final String TABLE_LOAN ="loan";
 
     public static final String AUTHORITY_ITEM =  AUTHORITY + TABLE_ITEM;
-    public static final String AUTHORITY_MEMBER =  AUTHORITY + TABLE_MEMBER;
+    public static final String AUTHORITY_MEMBER =  AUTHORITY + "MemberProvider";
     public static final String AUTHORITY_LOAN =  AUTHORITY + TABLE_LOAN;
 
     public static final Uri CONTENT_URI= Uri.parse("content://" + TABLE_ITEM + "/");
-    public static final Uri CONDITION= Uri.parse("content://" + TABLE_ITEM + "/");
+    //public static final Uri CONDITION= Uri.parse("content://" + TABLE_ITEM + "/");
 
-    public static final Uri CONTENT_URI_ITEM = Uri.parse("content://" + TABLE_ITEM + "/");
-    public static final Uri CONTENT_URI_MEMBER= Uri.parse("content://" + TABLE_MEMBER + "/");
-    public static final Uri CONTENT_URI_LOAN = Uri.parse("content://" + TABLE_LOAN + "/");
+    public static final Uri CONTENT_URI_ITEM = Uri.parse("content://" + AUTHORITY_ITEM + "/" + TABLE_ITEM );
+    public static final Uri CONTENT_URI_MEMBER= Uri.parse("content://" + AUTHORITY_MEMBER + "/" + TABLE_MEMBER);
+    public static final Uri CONTENT_URI_LOAN = Uri.parse("content://" + AUTHORITY_LOAN + "/" + TABLE_LOAN);
 
     public static final int DATA_ITEMS = 1;
     public static final int DATA_ITEM = 2;
