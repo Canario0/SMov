@@ -71,6 +71,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
     }
 
     private void setDialogView(View aux, Cursor x) {
+        ((TextView) aux.findViewById(R.id.item_id)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.ID)));
         ((TextView) aux.findViewById(R.id.dialog_title)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.BARCODE)));
         switch (x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))) {
             case -1:
