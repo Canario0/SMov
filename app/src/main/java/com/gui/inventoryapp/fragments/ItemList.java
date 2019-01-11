@@ -3,17 +3,26 @@ package com.gui.inventoryapp.fragments;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.app.LoaderManager;
+import android.content.ClipData;
+import android.content.ContentProvider;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.UserDictionary;
 import android.util.Log;
+import android.view.KeyboardShortcutGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -22,6 +31,7 @@ import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.constant.ItemConstants;
+import com.gui.inventoryapp.contentprovider.ItemProvider;
 
 import java.util.zip.Inflater;
 
@@ -34,6 +44,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
             ItemConstants.ITEM.CONDITION};
     private static final int[] TO = {R.id.item_barcode, R.id.item_condition};
     private static final int LOADER_ID = 42;
+    String current_open = "";
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -75,13 +86,13 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         ((TextView) aux.findViewById(R.id.dialog_title)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.BARCODE)));
         switch (x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))) {
             case -1:
-                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))+ 1);
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION)) + 1);
                 break;
             case 0:
-                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))+ 1);
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION)) + 1);
                 break;
             case 1:
-                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))+ 1);
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION)) + 1);
                 break;
 
         }
@@ -96,26 +107,74 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Cursor x = (Cursor) this.getListAdapter().getItem(position);
-        TextView v = view.findViewById(R.id.item_barcode);
-//        Toast.makeText(getActivity(), "YEY MA BOY soy el item: " + position + " y contengo " + v.getText(), Toast.LENGTH_SHORT).show();
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        final AlertDialog alertDialog;
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        // set title
+        current_open = x.getString(x.getColumnIndex(ItemConstants.ITEM.BARCODE));
         View aux = inflater.inflate(R.layout.item_dialog, null);
         setDialogView(aux, x);
-        // set dialog message
+//         set dialog messag
         alertDialogBuilder.setView(aux)
-                .setCancelable(true)
+                .setCancelable(false)
                 .setNegativeButton("Salir", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // if this button is clicked, just close
                         // the dialog box and do nothing
+                        current_open = "";
                         dialog.cancel();
                     }
                 });
 
         // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog = alertDialogBuilder.create();
+
+        // Listeners
+
+        ((Spinner) aux.findViewById(R.id.item_state)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 2) {
+                    Toast.makeText(getActivity(), "No está implementado todavía", Toast.LENGTH_LONG).show();
+                } else {
+                    ContentValues values = new ContentValues();
+                    values.putNull(ItemConstants.ITEM.GIVEN_TO);
+                    values.putNull(ItemConstants.ITEM.CHECKOUT_EXPIRE_DATE);
+                    values.put(ItemConstants.ITEM.CONDITION, position - 1);
+                    int mRowsUpdated = getActivity().getContentResolver().update(
+                            ItemConstants.CONTENT_URI,   // the user dictionary content URI
+                            values,                       // the columns to update
+                            ItemConstants.ITEM.BARCODE + " LIKE '" + current_open + "'",                    // the column to select on
+                            null                    // the value to compare to
+                    );
+
+                    if (mRowsUpdated != 0) {
+                        reset();
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        ((ImageView) aux.findViewById(R.id.delete_item)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int mRowsUpdated = getActivity().getContentResolver().delete(
+                        ItemConstants.CONTENT_URI,   // the user dictionary content URI
+                        ItemConstants.ITEM.BARCODE + " LIKE '" + current_open + "'",                    // the column to select on
+                        null                    // the value to compare to
+                );
+
+                if (mRowsUpdated != 0) {
+                    reset();
+                    current_open = "";
+                    alertDialog.cancel();
+                }
+            }
+        });
 
         // show it
         alertDialog.show();
@@ -135,24 +194,40 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
     class TimelineViewBinder implements SimpleCursorAdapter.ViewBinder {
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-            if (view.getId() != R.id.item_condition)
-                return false;
-            switch (cursor.getInt(columnIndex)) {
-                case -1:
-                    ((TextView) view).setTextColor(Color.parseColor("#DC3545"));
-                    ((TextView) view).setText("averiado");
-                    break;
-                case 0:
-                    ((TextView) view).setTextColor(Color.parseColor("#28A745"));
-                    ((TextView) view).setText("disponible");
-                    break;
-                case 1:
-                    ((TextView) view).setTextColor(Color.parseColor("#FFC107"));
-                    ((TextView) view).setText("prestado");
-                    break;
+            if (view.getId() == R.id.item_state) {
+                switch (cursor.getInt(columnIndex)) {
+                    case -1:
+                        ((Spinner) view.findViewById(R.id.item_state)).setSelection(cursor.getInt(columnIndex) + 1);
+                        break;
+                    case 0:
+                        ((Spinner) view.findViewById(R.id.item_state)).setSelection(cursor.getInt(columnIndex) + 1);
+                        break;
+                    case 1:
+                        ((Spinner) view.findViewById(R.id.item_state)).setSelection(cursor.getInt(columnIndex) + 1);
+                        break;
+
+                }
+                return true;
+            } else if (view.getId() == R.id.item_condition) {
+                switch (cursor.getInt(columnIndex)) {
+                    case -1:
+                        ((TextView) view).setTextColor(Color.parseColor("#DC3545"));
+                        ((TextView) view).setText("averiado");
+                        break;
+                    case 0:
+                        ((TextView) view).setTextColor(Color.parseColor("#28A745"));
+                        ((TextView) view).setText("disponible");
+                        break;
+                    case 1:
+                        ((TextView) view).setTextColor(Color.parseColor("#FFC107"));
+                        ((TextView) view).setText("prestado");
+                        break;
+                }
+                return true;
             }
 
-            return true;
+
+            return false;
         }
     }
 }
