@@ -25,7 +25,6 @@ public class LoanProvider extends ContentProvider {
         sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sURIMatcher.addURI(DatabaseConstants.AUTHORITY_LOAN, DatabaseConstants.TABLE_LOAN, DatabaseConstants.CASE_LOANS);
         sURIMatcher.addURI(DatabaseConstants.AUTHORITY_LOAN, DatabaseConstants.TABLE_LOAN + "/#", DatabaseConstants.CASE_LOAN);
-        sURIMatcher.addURI(DatabaseConstants.AUTHORITY_LOAN, DatabaseConstants.TABLE_LOAN + "/" + DatabaseConstants.COUNT, DatabaseConstants.CASE_LOANS_COUNT);
 
     }
 
@@ -42,7 +41,6 @@ public class LoanProvider extends ContentProvider {
         String where;
         switch (sURIMatcher.match(uri)) {
             case DatabaseConstants.CASE_LOANS:
-            case DatabaseConstants.CASE_LOANS_COUNT:
                 where = selection;
                 break;
             case DatabaseConstants.CASE_LOAN:
@@ -58,15 +56,7 @@ public class LoanProvider extends ContentProvider {
 
         String orderBy = (TextUtils.isEmpty(sortOrder)) ? DatabaseConstants.DEFAULT_SORT_L : sortOrder;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = null;
-
-        if(sURIMatcher.match(uri) == DatabaseConstants.CASE_LOANS_COUNT){
-            String sql = String.format("SELECT COUNT(*) FROM %s " + (TextUtils.isEmpty(where) ? ";" : "Where " + where + ";"),DatabaseConstants.TABLE_LOAN);
-            cursor = db.rawQuery(sql, selectionArgs);
-        }else{
-            cursor = db.query(DatabaseConstants.TABLE_LOAN, projection, where, selectionArgs, null, null, orderBy);
-        }
-
+        Cursor cursor = cursor = db.query(DatabaseConstants.TABLE_LOAN, projection, where, selectionArgs, null, null, orderBy);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         Log.d(TAG,  cursor.getCount() + " registros recuperados");
         db.close();

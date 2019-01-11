@@ -29,7 +29,7 @@ public class TESTING extends AppCompatActivity {
         ContentValues values = new ContentValues();
 
         values.clear();
-        values.put(DatabaseConstants.Member.ID, 12);
+        values.put(DatabaseConstants.Member.ID, 1);
         values.put(DatabaseConstants.Member.ALIAS, "CANARIO");
         values.put(DatabaseConstants.Member.DNI, "1223R");
         values.put(DatabaseConstants.Member.NAME, "Miguel");
@@ -77,7 +77,7 @@ public class TESTING extends AppCompatActivity {
         */
         EditText ed = findViewById(R.id.editText);
 
-        Cursor cursor = getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER.toString() + "/12"),
+        Cursor cursor = getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER.toString() + "/1"),
                 null,
                 "",
                 null,

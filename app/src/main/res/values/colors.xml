@@ -3,4 +3,8 @@
     <color name="colorPrimary">#545454</color>
     <color name="colorPrimaryDark">#2b2b2b</color>
     <color name="colorAccent">#2b2b2b</color>
+
+    <color name="status_item_damaged">#DC3545</color>
+    <color name="status_item_available">#28A745</color>
+    <color name="status_item_onLoan">#FFC107</color>
 </resources>

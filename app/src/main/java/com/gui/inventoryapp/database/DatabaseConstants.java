@@ -39,7 +39,6 @@ public class DatabaseConstants {
 
     public static final int CASE_LOANS = 1;
     public static final int CASE_LOAN = 2;
-    public static final int CASE_LOANS_COUNT = 3;
 
 
     public class Item {

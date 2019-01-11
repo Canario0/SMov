@@ -1,11 +1,18 @@
 package com.gui.inventoryapp.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.util.Log;
 
 import com.gui.inventoryapp.database.DatabaseConstants.Item;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -81,27 +88,48 @@ public class DbHelper extends SQLiteOpenHelper {
         Log.d(TAG, "onCreate: ACTIVANDO CLAVES FORANEAS");
         db.execSQL("PRAGMA foreign_keys = ON;");
 
-        /*
-        sql = "insert into items (barcode, owner, condition ) " +
-                "values (" +
-                "'RPI-000'," + //barcode
-                "'GUI'," + //owner
-                "0);";
-        db.execSQL(sql);
-        sql = "insert into items (barcode, owner, condition ) " +
-                "values (" +
-                "'RPI-001'," + //barcode
-                "'GUI'," + //owner
-                "1)";
-        db.execSQL(sql);
-        sql = "insert into items (barcode, owner, condition ) " +
-                "values (" +
-                "'RPI-002'," + //barcode
-                "'GUI'," + //owner
-                "-1)";
-        db.execSQL(sql);
 
-        */
+        /* Datos de prueba */
+        ContentValues values = new ContentValues();
+
+        values.clear();
+        values.put(DatabaseConstants.Member.ID, 1);
+        values.put(DatabaseConstants.Member.ALIAS, "MIGUELIO");
+        values.put(DatabaseConstants.Member.DNI, "1223R");
+        values.put(DatabaseConstants.Member.NAME, "Miguel");
+        values.put(DatabaseConstants.Member.LASTNAME, "Ranero");
+        values.put(DatabaseConstants.Member.EMAIL, "miguel@uva.es");
+        values.put(DatabaseConstants.Member.PHONE, "+1555123453");
+
+        db.insertWithOnConflict(DatabaseConstants.TABLE_MEMBER, null, values,
+                SQLiteDatabase.CONFLICT_IGNORE);
+
+        values.clear();
+        values.put(DatabaseConstants.Item.BARCODE, "1234231323");
+        values.put(DatabaseConstants.Item.DAMAGED, 0);
+        values.put(DatabaseConstants.Item.OWNER, 12);
+
+        db.insertWithOnConflict(DatabaseConstants.TABLE_ITEM, null, values,
+                SQLiteDatabase.CONFLICT_IGNORE);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd", Locale.getDefault());
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2019);
+        cal.set(Calendar.MONTH, Calendar.JANUARY);
+        cal.set(Calendar.DAY_OF_MONTH, 17);
+
+        Date dateRepresentation = cal.getTime();
+
+        values.clear();
+        values.put(DatabaseConstants.Loan.END_OF_LOAN, dateFormat.format(dateRepresentation));
+        values.put(DatabaseConstants.Loan.ITEM, 1);
+        values.put(DatabaseConstants.Loan.MEMBER, 1);
+
+        db.insertWithOnConflict(DatabaseConstants.TABLE_LOAN, null, values,
+                SQLiteDatabase.CONFLICT_IGNORE);
+
     }
 
     @Override

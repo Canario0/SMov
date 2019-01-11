@@ -11,6 +11,7 @@ import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +25,8 @@ import android.widget.Toast;
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.database.DatabaseConstants;
 
+import java.util.logging.Logger;
 import java.util.zip.Inflater;
-
 
 
 public class ItemList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
@@ -37,9 +38,9 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
     private static final int[] TO = {R.id.item_barcode, R.id.item_condition};
     private static final int LOADER_ID = 42;
 
-    private static int STATUS_ITEM_DAMAGED = 2;
+    private static int STATUS_ITEM_DAMAGED = 0;
     private static int STATUS_ITEM_AVAILABLE = 1;
-    private static int STATUS_ITEM_ONLOAN = 0;
+    private static int STATUS_ITEM_ONLOAN = 2;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -85,30 +86,29 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
 
         //Si está averiado
         if (x.getInt(x.getColumnIndex(DatabaseConstants.Item.DAMAGED)) == 1) {
-                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_DAMAGED);
-        }else{
+            ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_DAMAGED);
+        } else {
 
             // Se seleccionan los préstamos que finalizan antes de hoy, para ver si el elemento está disponible
-            String selection = DatabaseConstants.Loan.ITEM + "=" + x.getColumnIndex(DatabaseConstants.Item.BARCODE)
-                    + " and " + DatabaseConstants.Loan.END_OF_LOAN + " < " + "CURRENT_DATE";
+            String selection = DatabaseConstants.Loan.ITEM + "=" + x.getInt(x.getColumnIndex(DatabaseConstants.Item.ID))
+                  + " and " + DatabaseConstants.Loan.END_OF_LOAN + " >= " + "CURRENT_DATE";
 
-           Cursor cursor = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),
+            Cursor cursor = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),
                     null,
                     selection,
                     null,
                     null);
-
+            Log.d("!--.", String.format("COUNT: %d",cursor.getCount()));
             //Si está prestado
-           if(cursor.getCount() > 0){
-               ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_ONLOAN);
-               cursor.moveToNext();
-               ((TextView) aux.findViewById(R.id.book_end_date)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Loan.END_OF_LOAN)));
-               ((TextView) aux.findViewById(R.id.rent_user)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Loan.MEMBER)));
-           }
-           else{
-               ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_AVAILABLE);
-           }
-           cursor.close();
+            if (cursor.getCount() > 0) {
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_ONLOAN);
+                cursor.moveToNext();
+                ((TextView) aux.findViewById(R.id.book_end_date)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.END_OF_LOAN)));
+                ((TextView) aux.findViewById(R.id.rent_user)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.MEMBER)));
+            } else {
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_AVAILABLE);
+            }
+            cursor.close();
         }
 
         ((TextView) aux.findViewById(R.id.added_date)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.ENTRY_DATE)));
@@ -161,20 +161,35 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
             if (view.getId() != R.id.item_condition)
                 return false;
-            switch (cursor.getInt(columnIndex)) {
-                case -1:
-                    ((TextView) view).setTextColor(Color.parseColor("#DC3545"));
-                    ((TextView) view).setText("averiado");
-                    break;
-                case 0:
-                    ((TextView) view).setTextColor(Color.parseColor("#28A745"));
-                    ((TextView) view).setText("disponible");
-                    break;
-                case 1:
-                    ((TextView) view).setTextColor(Color.parseColor("#FFC107"));
-                    ((TextView) view).setText("prestado");
-                    break;
+
+            //Damaged
+            if (cursor.getInt(columnIndex) == 1) {
+                ((TextView) view).setTextColor(ContextCompat.getColor(getContext(), R.color.status_item_damaged));;
+                ((TextView) view).setText(R.string.status_item_damaged);
+                return true;
             }
+
+            //Available
+            ((TextView) view).setTextColor(ContextCompat.getColor(getContext(), R.color.status_item_available));
+            ((TextView) view).setText(R.string.status_item_available);
+
+            //Testing if is on loan
+            String selection = DatabaseConstants.Loan.ITEM + "=" + cursor.getInt(cursor.getColumnIndex(DatabaseConstants.Item.ID))
+                    + " and " + DatabaseConstants.Loan.END_OF_LOAN + " >= " + "CURRENT_DATE";
+
+            Cursor cursor_loan = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),
+                    null,
+                    selection,
+                    null,
+                    null);
+
+            //if is on loan
+            if (cursor_loan.getCount() > 0) {
+                ((TextView) view).setTextColor(ContextCompat.getColor(getContext(), R.color.status_item_onLoan));
+                ((TextView) view).setText(R.string.status_item_onLoan);
+            }
+
+            cursor_loan.close();
 
             return true;
         }
