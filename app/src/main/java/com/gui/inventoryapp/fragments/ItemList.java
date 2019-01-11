@@ -130,7 +130,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         // set dialog message
         alertDialogBuilder.setView(aux)
                 .setCancelable(true)
-                .setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.salir_dialog, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // if this button is clicked, just close
                         // the dialog box and do nothing
