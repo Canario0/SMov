@@ -41,8 +41,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
         String item_table_sql = String.format("CREATE TABLE %s (" +
                         "%s TEXT PRIMARY KEY NOT NULL," + //barcode
-                        "%s TEXT NOT NULL," + //owner
-                        "%s DATE NOT NULL DEFAULT CURRENT_TIME," + //entry date
+                        "%s INT NOT NULL," + //owner
+                        "%s DATE NOT NULL DEFAULT CURRENT_DATE," + //entry date
                         "%s INT NOT NULL DEFAULT 0," + // damaged. values: 1 = broken, 0 = available
                         "FOREIGN KEY (%s) REFERENCES %s(%s))",
                 DatabaseConstants.TABLE_ITEM,
@@ -57,7 +57,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         String loan_table_sql = String.format("CREATE TABLE %s (" +
                         "%s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + //id
-                        "%s DATE NOT NULL DEFAULT CURRENT_TIME," + //start
+                        "%s DATE NOT NULL DEFAULT CURRENT_DATE," + //start
                         "%s DATE NOT NULL," + //end
                         "%s TEXT NOT NULL," + //member
                         "%s TEXT NOT NULL," + //item
@@ -74,6 +74,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
         Log.d(TAG, "onCreate: Creando tabla Loan.." + loan_table_sql);
         db.execSQL(loan_table_sql);
+
+        //Activamos las claves foráneas
+        Log.d(TAG, "onCreate: ACTIVANDO CLAVES FORANEAS");
+        db.execSQL("PRAGMA foreign_keys = ON;");
 
         /*
         sql = "insert into items (barcode, owner, condition ) " +

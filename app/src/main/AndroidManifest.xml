@@ -34,6 +34,16 @@
             android:authorities="com.gui.inventoryapp.database.contentProviders.MemberProvider"
             android:exported="false" />
 
+        <provider
+            android:name="com.gui.inventoryapp.database.contentProviders.ItemProvider"
+            android:authorities="com.gui.inventoryapp.database.contentProviders.ItemProvider"
+            android:exported="false" />
+
+        <provider
+            android:name="com.gui.inventoryapp.database.contentProviders.LoanProvider"
+            android:authorities="com.gui.inventoryapp.database.contentProviders.LoanProvider"
+            android:exported="false" />
+
     </application>
 
 </manifest>

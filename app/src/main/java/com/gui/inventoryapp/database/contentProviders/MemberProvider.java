@@ -24,8 +24,8 @@ private static final UriMatcher sURIMatcher;
 
 static {
     sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    sURIMatcher.addURI(DatabaseConstants.AUTHORITY_MEMBER, DatabaseConstants.TABLE_MEMBER, DatabaseConstants.DATA_ITEMS);
-    sURIMatcher.addURI(DatabaseConstants.AUTHORITY_MEMBER, DatabaseConstants.TABLE_MEMBER + "/#", DatabaseConstants.DATA_ITEM);
+    sURIMatcher.addURI(DatabaseConstants.AUTHORITY_MEMBER, DatabaseConstants.TABLE_MEMBER, DatabaseConstants.CASE_MEMBERS);
+    sURIMatcher.addURI(DatabaseConstants.AUTHORITY_MEMBER, DatabaseConstants.TABLE_MEMBER + "/#", DatabaseConstants.CASE_MEMBER);
 }
 
 @Override
@@ -40,10 +40,10 @@ public boolean onCreate() {
 public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
     String where;
     switch (sURIMatcher.match(uri)) {
-        case DatabaseConstants.DATA_ITEMS:
+        case DatabaseConstants.CASE_MEMBERS:
             where = selection;
             break;
-        case DatabaseConstants.DATA_ITEM:
+        case DatabaseConstants.CASE_MEMBER:
             long id = ContentUris.parseId(uri);
             where = DatabaseConstants.Member.ID
                     + "="
@@ -54,7 +54,7 @@ public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable S
             throw new IllegalArgumentException("uri incorrecta: " + uri);
     }
 
-    String orderBy = (TextUtils.isEmpty(sortOrder)) ? DatabaseConstants.DEFAULT_SORT : sortOrder;
+    String orderBy = (TextUtils.isEmpty(sortOrder)) ? DatabaseConstants.DEFAULT_SORT_M : sortOrder;
     SQLiteDatabase db = dbHelper.getReadableDatabase();
     Cursor cursor = db.query(DatabaseConstants.TABLE_MEMBER, projection, where, selectionArgs, null, null, orderBy);
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -68,10 +68,10 @@ public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable S
 @Override
 public String getType(@NonNull Uri uri) {
     switch (sURIMatcher.match(uri)) {
-        case DatabaseConstants.DATA_ITEMS:
+        case DatabaseConstants.CASE_MEMBERS:
             Log.d(TAG, "gotType: vnd.android.cursor.dir/vnd.com.gui.inventoryapp.database.contentProviders.MemberProvider");
             return "vnd.android.cursor.dir/vnd.com.gui.inventoryapp.database.contentProviders.MemberProvider";
-        case DatabaseConstants.DATA_ITEM:
+        case DatabaseConstants.CASE_MEMBER:
             Log.d(TAG, "gotType: vnd.android.cursor.item/vnd.com.gui.inventoryapp.database.contentProviders.MemberProvider");
             return "vnd.android.cursor.item/vnd.com.gui.inventoryapp.database.contentProviders.MemberProvider";
         default:
@@ -84,7 +84,7 @@ public String getType(@NonNull Uri uri) {
 public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
     Uri ret = null;
     // Nos aseguramos de que la URI es correcta
-    if (sURIMatcher.match(uri) != DatabaseConstants.DATA_ITEMS) {
+    if (sURIMatcher.match(uri) != DatabaseConstants.CASE_MEMBERS) {
         throw new IllegalArgumentException("uri incorrecta: " + uri);
     }
     SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -111,10 +111,10 @@ public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable St
 
     String where;
     switch (sURIMatcher.match(uri)) {
-        case DatabaseConstants.DATA_ITEMS:
+        case DatabaseConstants.CASE_MEMBERS:
             where = selection;
             break;
-        case DatabaseConstants.DATA_ITEM:
+        case DatabaseConstants.CASE_MEMBER:
             long id = ContentUris.parseId(uri);
             where = DatabaseConstants.Member.ID
                     + "="
@@ -124,6 +124,7 @@ public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable St
         default:
             throw new IllegalArgumentException("uri incorrecta: " + uri);
     }
+
     SQLiteDatabase db = dbHelper.getWritableDatabase();
     int ret = db.update(DatabaseConstants.TABLE_MEMBER, values, where, selectionArgs);
 

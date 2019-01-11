@@ -13,6 +13,11 @@ import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.database.DatabaseConstants;
 import com.gui.inventoryapp.database.DbHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 public class TESTING extends AppCompatActivity {
 
     @Override
@@ -32,7 +37,38 @@ public class TESTING extends AppCompatActivity {
         values.put(DatabaseConstants.Member.EMAIL, "miguel@uva.es");
         values.put(DatabaseConstants.Member.PHONE, "+1555123453");
 
-        getContentResolver().insert(DatabaseConstants.CONTENT_URI_MEMBER,values);
+        getContentResolver().insert(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER),values);
+
+        values.clear();
+        values.put(DatabaseConstants.Item.BARCODE, "1234231323");
+        values.put(DatabaseConstants.Item.DAMAGED, 0);
+        values.put(DatabaseConstants.Item.OWNER, 12);
+
+        getContentResolver().insert(Uri.parse(DatabaseConstants.CONTENT_URI_ITEM),values);
+
+        values.clear();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "yyyy-MM-dd", Locale.getDefault());
+
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2019);
+        cal.set(Calendar.MONTH, Calendar.JANUARY);
+        cal.set(Calendar.DAY_OF_MONTH, 9);
+
+        Date dateRepresentation = cal.getTime();
+
+
+
+        values.put(DatabaseConstants.Loan.END_OF_LOAN, dateFormat.format(dateRepresentation));
+        values.put(DatabaseConstants.Loan.ITEM, "1234231323");
+        values.put(DatabaseConstants.Loan.MEMBER, 12);
+
+        getContentResolver().insert(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),values);
+
+
+
 
         /*
         dbHelper.getWritableDatabase().insertWithOnConflict(DatabaseConstants.TABLE_MEMBER,
@@ -41,16 +77,39 @@ public class TESTING extends AppCompatActivity {
         */
         EditText ed = findViewById(R.id.editText);
 
-        Cursor cursor = getContentResolver().query(DatabaseConstants.CONTENT_URI_MEMBER,
+        Cursor cursor = getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER.toString() + "/12"),
                 null,
                 "",
                 null,
                 DatabaseConstants.Member.ALIAS);
 
         //Cursor cursor = dbHelper.getReadableDatabase().query(DatabaseConstants.TABLE_MEMBER,
-                null,null,null, null, null, null);
-        Log.d("!--.", String.format("%d", cursor.getCount()));
+                //null,null,null, null, null, null);
+        cursor.moveToNext();
+        Log.d("!--.", String.format("%d", cursor.getPosition()));
+        Log.d("!--.", String.format("%d", cursor.getColumnCount()));
+        Log.d("!--.", String.format("%s", cursor.getString(cursor.getColumnIndex(DatabaseConstants.Member.NAME))));
         Log.d("!DEBUG!", "NEW ROWS");
+
+        cursor = getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_ITEM.toString()),
+                null,
+                "",
+                null,
+                null);
+
+        cursor.moveToNext();
+        Log.d("!--.", String.format("%s", cursor.getString(cursor.getColumnIndex(DatabaseConstants.Item.BARCODE))));
+
+
+        cursor = getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN + "/" + DatabaseConstants.COUNT),
+                null,
+                DatabaseConstants.Loan.ITEM +"=" +"1234231323" + " and " +DatabaseConstants.Loan.END_OF_LOAN + " < " + "CURRENT_DATE",
+                null,
+                null);
+
+        cursor.moveToNext();
+        Log.d("!--.", String.format("%d", cursor.getCount()));
+        Log.d("!--.", String.format("COUNT = %s", cursor.getInt(0)));
 
     }
 }

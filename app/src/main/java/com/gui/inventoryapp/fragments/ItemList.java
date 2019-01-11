@@ -40,7 +40,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         if (i != LOADER_ID)
             return null;
         Log.d(TAG, "onCreateLoader");
-        return new CursorLoader(getActivity(), DatabaseConstants.CONTENT_URI, null, null, null, DatabaseConstants.DEFAULT_SORT);
+        return new CursorLoader(getActivity(), DatabaseConstants.CONTENT_URI, null, null, null, DatabaseConstants.DEFAULT_SORT_M);
     }
 
     @Override
