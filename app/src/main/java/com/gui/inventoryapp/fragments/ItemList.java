@@ -3,27 +3,18 @@ package com.gui.inventoryapp.fragments;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.app.LoaderManager;
-import android.content.ClipData;
-import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.UserDictionary;
 import android.util.Log;
-import android.view.KeyboardShortcutGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,9 +22,6 @@ import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.constant.ItemConstants;
-import com.gui.inventoryapp.contentprovider.ItemProvider;
-
-import java.util.zip.Inflater;
 
 
 public class ItemList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {

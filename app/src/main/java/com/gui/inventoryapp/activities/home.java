@@ -22,6 +22,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.gui.inventoryapp.R;
+import com.gui.inventoryapp.fragments.AddItem;
 import com.gui.inventoryapp.fragments.ItemList;
 
 public class home extends AppCompatActivity
@@ -135,12 +136,13 @@ public class home extends AppCompatActivity
 
         if (id == R.id.item_list) {
             if (current_selected != R.id.item_list) {
+//                getFragmentManager().beginTransaction().remove(this.getFragmentManager().findFragmentByTag(current_fragment)).commit();
                 search_combo.setVisibility(View.VISIBLE);
                 ItemList fragment = new ItemList();
                 current_fragment = fragment.getClass().getSimpleName();
                 getFragmentManager()
                         .beginTransaction()
-                        .replace(android.R.id.content, fragment, current_fragment
+                        .replace(R.id.content, fragment, current_fragment
                         )
                         .commit();
                 current_selected = R.id.item_list;
@@ -148,7 +150,19 @@ public class home extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.add_item) {
-            search_combo.setVisibility(View.GONE);
+            if (current_selected != R.id.add_item) {
+//                getFragmentManager().beginTransaction().remove(this.getFragmentManager().findFragmentByTag(current_fragment)).commit();
+                search_combo.setVisibility(View.GONE);
+                AddItem fragment = new AddItem();
+                current_fragment = fragment.getClass().getSimpleName();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content, fragment, current_fragment)
+                        .commit();
+                current_selected = R.id.add_item;
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
         } else if (id == R.id.search_member) {
         } else if (id == R.id.new_checkouts) {
         } else if (id == R.id.close_to_end_checkouts) {

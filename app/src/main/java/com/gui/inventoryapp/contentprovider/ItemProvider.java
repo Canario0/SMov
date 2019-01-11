@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
@@ -68,7 +69,22 @@ public class ItemProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        return null;
+        /**
+         * Add a new student record
+         */
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        long rowID = db.insert(ItemConstants.TABLE	, "", values);
+
+        /**
+         * If record is added successfully
+         */
+        if (rowID > 0) {
+            Uri _uri = ContentUris.withAppendedId(ItemConstants.CONTENT_URI, rowID);
+            getContext().getContentResolver().notifyChange(_uri, null);
+            return _uri;
+        }else {
+            return null;
+        }
     }
 
     @Override
