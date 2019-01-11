@@ -55,14 +55,14 @@ public class TESTING extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 2019);
         cal.set(Calendar.MONTH, Calendar.JANUARY);
-        cal.set(Calendar.DAY_OF_MONTH, 9);
+        cal.set(Calendar.DAY_OF_MONTH, 10);
 
         Date dateRepresentation = cal.getTime();
 
 
 
         values.put(DatabaseConstants.Loan.END_OF_LOAN, dateFormat.format(dateRepresentation));
-        values.put(DatabaseConstants.Loan.ITEM, "1234231323");
+        values.put(DatabaseConstants.Loan.ITEM, 1);
         values.put(DatabaseConstants.Loan.MEMBER, 12);
 
         getContentResolver().insert(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),values);
@@ -99,11 +99,12 @@ public class TESTING extends AppCompatActivity {
 
         cursor.moveToNext();
         Log.d("!--.", String.format("%s", cursor.getString(cursor.getColumnIndex(DatabaseConstants.Item.BARCODE))));
+        Log.d("!--.", String.format("%d", cursor.getInt(cursor.getColumnIndex(DatabaseConstants.Item.ID))));
 
 
         cursor = getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN + "/" + DatabaseConstants.COUNT),
                 null,
-                DatabaseConstants.Loan.ITEM +"=" +"1234231323" + " and " +DatabaseConstants.Loan.END_OF_LOAN + " < " + "CURRENT_DATE",
+                DatabaseConstants.Loan.ITEM +"=" + "1" + " and " +DatabaseConstants.Loan.END_OF_LOAN + " < " + "CURRENT_DATE",
                 null,
                 null);
 

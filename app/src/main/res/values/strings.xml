@@ -55,6 +55,12 @@
         <item>-1</item>
     </string-array>
 
+    <string-array name="state_entries">
+        <item>Averiado</item>
+        <item>Disponible</item>
+        <item>Prestado</item>
+    </string-array>
+
     <string-array name="list_preference_entries">
         <item>Entry 1</item>
         <item>Entry 2</item>

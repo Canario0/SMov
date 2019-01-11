@@ -2,6 +2,7 @@ package com.gui.inventoryapp.database.contentProviders;
 
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -42,8 +43,8 @@ public class ItemProvider extends ContentProvider {
                 where = selection;
                 break;
             case DatabaseConstants.CASE_ITEM:
-                String id = uri.getLastPathSegment();
-                where = DatabaseConstants.Item.BARCODE
+                long id = ContentUris.parseId(uri);
+                where = DatabaseConstants.Item.ID
                         + "="
                         + id
                         + (TextUtils.isEmpty(selection) ? "" : " and ( " + selection + " )");
@@ -89,8 +90,8 @@ public class ItemProvider extends ContentProvider {
         long rowId = db.insertWithOnConflict(DatabaseConstants.TABLE_ITEM, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         // ¿Se insertó correctamente?
         if (rowId != -1) {
-            String id = values.getAsString(DatabaseConstants.Item.BARCODE);
-            ret = Uri.parse(uri.toString() + id);
+            long id = values.getAsLong(DatabaseConstants.Item.ID);
+            ret = ContentUris.withAppendedId(uri, id);
             Log.d(TAG, "uri insertada: " + ret);
             // Notificar que los datos para la URI han cambiado
             getContext().getContentResolver().notifyChange(uri, null);
@@ -107,8 +108,8 @@ public class ItemProvider extends ContentProvider {
                 where = selection;
                 break;
             case DatabaseConstants.CASE_ITEM:
-                String id = uri.getLastPathSegment();
-                where = DatabaseConstants.Item.BARCODE
+                long id = ContentUris.parseId(uri);
+                where = DatabaseConstants.Item.ID
                         + "="
                         + id
                         + (TextUtils.isEmpty(selection) ? "" : " and ( " + selection + " )");
@@ -135,8 +136,8 @@ public class ItemProvider extends ContentProvider {
                 where = selection;
                 break;
             case DatabaseConstants.CASE_ITEM:
-                String id = uri.getLastPathSegment();
-                where = DatabaseConstants.Item.BARCODE
+                long id = ContentUris.parseId(uri);
+                where = DatabaseConstants.Item.ID
                         + "="
                         + id
                         + (TextUtils.isEmpty(selection) ? "" : " and ( " + selection + " )");

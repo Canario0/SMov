@@ -43,6 +43,7 @@ public class DatabaseConstants {
 
 
     public class Item {
+        public static final String ID = BaseColumns._ID;
         public static final String BARCODE = "barcode";
         public static final String OWNER = "owner";
         public static final String ENTRY_DATE = "entry_date";
@@ -50,7 +51,7 @@ public class DatabaseConstants {
     }
 
     public class Member{
-        public static final String ID = "id";
+        public static final String ID = BaseColumns._ID;
         public static final String ALIAS = "alias";
         public static final String NAME = "name";
         public static final String LASTNAME = "lastname";
@@ -60,7 +61,7 @@ public class DatabaseConstants {
     }
 
     public class Loan{
-        public static final String ID = "id";
+        public static final String ID = BaseColumns._ID;
         public static final String START_OF_LOAN = "start_of_loan";
         public static final String END_OF_LOAN =  "end_of_loan";
         public static final String ITEM = "item";

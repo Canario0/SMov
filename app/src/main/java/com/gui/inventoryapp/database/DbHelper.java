@@ -40,12 +40,14 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(member_table_sql);
 
         String item_table_sql = String.format("CREATE TABLE %s (" +
-                        "%s TEXT PRIMARY KEY NOT NULL," + //barcode
-                        "%s INT NOT NULL," + //owner
-                        "%s DATE NOT NULL DEFAULT CURRENT_DATE," + //entry date
-                        "%s INT NOT NULL DEFAULT 0," + // damaged. values: 1 = broken, 0 = available
+                        " %s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + //id
+                        " %s TEXT NOT NULL UNIQUE," + //barcode
+                        " %s INT NOT NULL," + //owner
+                        " %s DATE NOT NULL DEFAULT CURRENT_DATE," + //entry date
+                        " %s INT NOT NULL DEFAULT 0," + // damaged. values: 1 = broken, 0 = available
                         "FOREIGN KEY (%s) REFERENCES %s(%s))",
                 DatabaseConstants.TABLE_ITEM,
+                DatabaseConstants.Item.ID,
                 DatabaseConstants.Item.BARCODE,
                 DatabaseConstants.Item.OWNER,
                 DatabaseConstants.Item.ENTRY_DATE,
@@ -59,8 +61,8 @@ public class DbHelper extends SQLiteOpenHelper {
                         "%s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + //id
                         "%s DATE NOT NULL DEFAULT CURRENT_DATE," + //start
                         "%s DATE NOT NULL," + //end
-                        "%s TEXT NOT NULL," + //member
-                        "%s TEXT NOT NULL," + //item
+                        "%s INTEGER NOT NULL," + //member
+                        "%s INTEGER NOT NULL," + //item
                         "FOREIGN KEY (%s) REFERENCES %s(%s)," +
                         "FOREIGN KEY (%s) REFERENCES %s(%s))",
                 DatabaseConstants.TABLE_LOAN,
@@ -70,7 +72,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 DatabaseConstants.Loan.MEMBER,
                 DatabaseConstants.Loan.ITEM,
                 DatabaseConstants.Loan.MEMBER, DatabaseConstants.TABLE_MEMBER, DatabaseConstants.Member.ID,
-                DatabaseConstants.Loan.ITEM, DatabaseConstants.TABLE_ITEM, DatabaseConstants.Item.BARCODE);
+                DatabaseConstants.Loan.ITEM, DatabaseConstants.TABLE_ITEM, DatabaseConstants.Item.ID);
 
         Log.d(TAG, "onCreate: Creando tabla Loan.." + loan_table_sql);
         db.execSQL(loan_table_sql);
