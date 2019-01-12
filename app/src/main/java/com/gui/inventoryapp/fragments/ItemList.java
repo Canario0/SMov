@@ -8,7 +8,6 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -24,12 +23,10 @@ import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.database.DatabaseConstants;
-
-import java.util.logging.Logger;
-import java.util.zip.Inflater;
+import com.gui.inventoryapp.interfaces.ListCommon;
 
 
-public class ItemList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public class ItemList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, ListCommon {
 
     private static final String TAG = ItemList.class.getSimpleName();
     private SimpleCursorAdapter mAdapter;
@@ -46,7 +43,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setEmptyText("Sin datos, registrar un nuvo elemento...");
+        setEmptyText("Sin datos, registrar un nuevo elemento...");
         mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.item, null, FROM, TO, 0);
         mAdapter.setViewBinder(new TimelineViewBinder());
         setListAdapter(mAdapter);
@@ -205,12 +202,14 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
 
     }
 
+    @Override
     public void update(String id) {
         Bundle bundle = new Bundle();
         bundle.putString("selection", DatabaseConstants.Item.BARCODE + " LIKE '" + id + "%'");
         getLoaderManager().restartLoader(LOADER_ID, bundle, this);
     }
 
+    @Override
     public void reset() {
         getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
