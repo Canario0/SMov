@@ -56,7 +56,7 @@ public class LoanProvider extends ContentProvider {
 
         String orderBy = (TextUtils.isEmpty(sortOrder)) ? DatabaseConstants.DEFAULT_SORT_L : sortOrder;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = cursor = db.query(DatabaseConstants.TABLE_LOAN, projection, where, selectionArgs, null, null, orderBy);
+        Cursor cursor = db.query(DatabaseConstants.TABLE_LOAN, projection, where, selectionArgs, null, null, orderBy);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         Log.d(TAG,  cursor.getCount() + " registros recuperados");
         db.close();
@@ -92,7 +92,7 @@ public class LoanProvider extends ContentProvider {
         long rowId = db.insertWithOnConflict(DatabaseConstants.TABLE_LOAN, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         // ¿Se insertó correctamente?
         if (rowId != -1) {
-            //long id = values.getAsLong(DatabaseConstants.Loan.ID);
+            //long id = values.getAsLong(DatabaseConstants.loan.ID);
             //ret = ContentUris.withAppendedId(uri, id);
             Log.d(TAG, "uri insertada");
             // Notificar que los datos para la URI han cambiado

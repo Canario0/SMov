@@ -15,10 +15,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.fragments.AddItem;
 import com.gui.inventoryapp.fragments.ItemList;
+import com.gui.inventoryapp.fragments.LoanList;
 import com.gui.inventoryapp.fragments.MemberList;
 import com.gui.inventoryapp.interfaces.ListCommon;
 
@@ -174,7 +176,20 @@ public class home extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.new_checkouts) {
+            if (current_selected != R.id.new_checkouts) {
+                search_combo.setVisibility(View.GONE);
+                LoanList fragment = new LoanList();
+                current_fragment = fragment.getClass().getSimpleName();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content, fragment, current_fragment)
+                        .commit();
+                current_selected = R.id.new_checkouts;
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
         } else if (id == R.id.close_to_end_checkouts) {
+            Toast.makeText(this, "No está implementado todavía", Toast.LENGTH_LONG).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

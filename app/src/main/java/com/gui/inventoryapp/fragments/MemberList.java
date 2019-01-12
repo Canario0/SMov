@@ -129,6 +129,7 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                 Date input;
                 Date today;
                 Cursor cursor_item;
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
                 //Comprobar barcode
                 if (!barcode.toString().equals("")) {
@@ -178,7 +179,7 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                 if (!date.toString().equals("")) {
 
                     ParsePosition error = new ParsePosition(0);
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
                     Calendar calendar = Calendar.getInstance();
                     input = dateFormat.parse(date.toString(), error);
                     today = calendar.getTime();
@@ -207,8 +208,8 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                 cursor_member.moveToFirst();
 
                 ContentValues values = new ContentValues();
-                values.put(DatabaseConstants.Loan.START_OF_LOAN, today.toString());
-                values.put(DatabaseConstants.Loan.END_OF_LOAN, input.toString());
+                values.put(DatabaseConstants.Loan.START_OF_LOAN, dateFormat.format(today));
+                values.put(DatabaseConstants.Loan.END_OF_LOAN, dateFormat.format(today));
                 values.put(DatabaseConstants.Loan.MEMBER, cursor_member.getInt(cursor_member.getColumnIndex(DatabaseConstants.Member.ID)));
                 values.put(DatabaseConstants.Loan.ITEM, cursor_item.getInt(cursor_item.getColumnIndex(DatabaseConstants.Item.ID)));
                 Uri out = getActivity().getContentResolver().insert(
@@ -218,6 +219,8 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                 cursor_member.close();
                 cursor_item.close();
                 Toast.makeText(getContext(), "Prestamo Creado", Toast.LENGTH_LONG).show();
+                barcode.clear();
+                date.clear();
             }
         });
 

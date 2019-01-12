@@ -83,7 +83,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 DatabaseConstants.Loan.MEMBER, DatabaseConstants.TABLE_MEMBER, DatabaseConstants.Member.ID,
                 DatabaseConstants.Loan.ITEM, DatabaseConstants.TABLE_ITEM, DatabaseConstants.Item.ID);
 
-        Log.d(TAG, "onCreate: Creando tabla Loan.." + loan_table_sql);
+        Log.d(TAG, "onCreate: Creando tabla loan.." + loan_table_sql);
         db.execSQL(loan_table_sql);
 
         //Activamos las claves foráneas
