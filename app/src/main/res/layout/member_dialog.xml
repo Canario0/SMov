@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/item_dialog_title"
+        android:id="@+id/member_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="20dp"
@@ -26,17 +26,16 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="Estado:"
+            android:text="Nombre:"
             android:textColor="@color/colorAccent"
+            android:gravity="center_vertical"
             android:textSize="17sp" />
 
-        <Spinner
-            android:id="@+id/item_state"
+        <TextView
+            android:id="@+id/member_dialog_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:entries="@array/state_entries"
+            android:layout_weight="1.5"
             android:textSize="17sp" />
     </LinearLayout>
 
@@ -52,41 +51,16 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/fecha_de_inclusion"
-            android:gravity="center_vertical"
+            android:text="Apellidos:"
             android:textColor="@color/colorAccent"
-            android:textSize="17sp" />
-
-        <TextView
-            android:id="@+id/added_date"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="17sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/fecha_de_fin_prestamo"
-            android:textColor="@color/colorAccent"
             android:textSize="17sp" />
 
         <TextView
-            android:id="@+id/book_end_date"
+            android:id="@+id/member_dialog_apellidos"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:textSize="17sp" />
     </LinearLayout>
 
@@ -103,16 +77,16 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/owner"
-            android:gravity="center_vertical"
+            android:text="E-Mail:"
             android:textColor="@color/colorAccent"
+            android:gravity="center_vertical"
             android:textSize="17sp" />
 
         <TextView
-            android:id="@+id/owner_name"
+            android:id="@+id/member_dialog_email"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:textSize="17sp" />
     </LinearLayout>
 
@@ -129,33 +103,73 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/prestado_a"
+            android:text="@string/add_item_barcode"
             android:textColor="@color/colorAccent"
             android:textSize="17sp" />
 
-        <TextView
-            android:id="@+id/rent_user"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="17sp" />
+            android:layout_weight="1.5"
+            android:layout_marginRight="20dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/member_dialog_barcode"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:hint="@string/add_item_barcode_hint"
+                android:inputType="text"
+                android:text=""
+                android:textAlignment="center" />
+
+            <ImageView
+                android:id="@+id/scan_barcode"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.7"
+                android:src="@drawable/ic_camera_alt_30" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Fecha Fin:"
+            android:textColor="@color/colorAccent"
+            android:gravity="center_vertical"
+            android:textSize="17sp" />
+
+        <EditText
+            android:id="@+id/member_dialog_date"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:hint="@string/add_item_date_hint"
+            android:inputType="date"
+            android:text=""
+            android:textAlignment="center"/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/member_dialog_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
-        android:gravity="right"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/delete_item"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_delete_black_24dp" />
-    </LinearLayout>
+        android:text="@string/aceptar_dialog"
+        android:layout_marginRight="20dp"/>
 
 
 </LinearLayout>

@@ -8,12 +8,19 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -23,6 +30,14 @@ import android.widget.Toast;
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.database.DatabaseConstants;
 import com.gui.inventoryapp.interfaces.ListCommon;
+
+import org.w3c.dom.Text;
+
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class MemberList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, ListCommon {
@@ -79,127 +94,139 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
 
         //((TextView) aux.findViewById(R.id.item_id)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.ID)));
 
-        ((TextView) aux.findViewById(R.id.dialog_title)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.BARCODE)));
-
-        //Si está averiado
-        if (x.getInt(x.getColumnIndex(DatabaseConstants.Item.DAMAGED)) == 1) {
-            ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_DAMAGED);
-        } else {
-
-            // Se seleccionan los préstamos sin devolver
-            String selection = String.format(DatabaseConstants.ACTIVE_LOAN_SELECTION,
-                    x.getInt(x.getColumnIndex(DatabaseConstants.Item.ID)));
-
-            Cursor cursor = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),
-                    null,
-                    selection,
-                    null,
-                    null);
-            Log.d("!--.", String.format("COUNT: %d", cursor.getCount()));
-            //Si está prestado
-            if (cursor.getCount() > 0) {
-                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_ONLOAN);
-                cursor.moveToNext();
-                ((TextView) aux.findViewById(R.id.book_end_date)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.END_OF_LOAN)));
-                ((TextView) aux.findViewById(R.id.rent_user)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.MEMBER)));
-            } else {
-                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_AVAILABLE);
-            }
-            cursor.close();
-        }
-
-        ((TextView) aux.findViewById(R.id.added_date)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.ENTRY_DATE)));
-
-        ((TextView) aux.findViewById(R.id.owner_name)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.OWNER)));
-
+        ((TextView) aux.findViewById(R.id.member_dialog_title)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Member.ALIAS)));
+        ((TextView) aux.findViewById(R.id.member_dialog_name)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Member.NAME)));
+        ((TextView) aux.findViewById(R.id.member_dialog_apellidos)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Member.LASTNAME)));
+        ((TextView) aux.findViewById(R.id.member_dialog_email)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Member.EMAIL)));
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (false) {
-            Cursor x = (Cursor) this.getListAdapter().getItem(position);
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            final AlertDialog alertDialog;
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            current_open = x.getInt(x.getColumnIndex(DatabaseConstants.Item.ID));
-            View aux = inflater.inflate(R.layout.item_dialog, null);
-            setDialogView(aux, x);
-//         set dialog messag
-            alertDialogBuilder.setView(aux)
-                    .setCancelable(true)
-                    .setNegativeButton(R.string.salir_dialog, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // if this button is clicked, just close
-                            // the dialog box and do nothing
-                            current_open = 0;
-                            dialog.cancel();
-                        }
-                    });
-
-            // create alert dialog
-            alertDialog = alertDialogBuilder.create();
-
-            // Listeners
-            ((Spinner) aux.findViewById(R.id.item_state)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position == STATUS_ITEM_ONLOAN) {
-                        Toast.makeText(getActivity(), "No está implementado todavía", Toast.LENGTH_LONG).show();
-                    } else {
-                        ContentValues values = new ContentValues();
-                        //values.putNull(DatabaseConstants.Item.GIVEN_TO);
-                        //values.putNull(ItemConstants.ITEM.CHECKOUT_EXPIRE_DATE);
-                        values.put(DatabaseConstants.Item.DAMAGED, Math.abs(position - 1));
-
-                        int mRowsUpdated = getActivity().getContentResolver().update(
-                                Uri.parse(DatabaseConstants.CONTENT_URI_ITEM + "/" + current_open),   // the user dictionary content URI
-                                values,                       // the columns to update
-                                null,                    // the column to select on
-                                null                    // the value to compare to
-                        );
-
-                        values.clear();
-                        values.put(DatabaseConstants.Loan.RETURNED, 1);
-                        String selection = String.format(DatabaseConstants.ACTIVE_LOAN_SELECTION, current_open);
-                        mRowsUpdated += getActivity().getContentResolver().update(
-                                Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),
-                                values,
-                                selection,
-                                null
-                        );
-
-                        if (mRowsUpdated != 0) {
-                            reset();
-                        }
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-
-            ((ImageView) aux.findViewById(R.id.delete_item)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int mRowsUpdated = getActivity().getContentResolver().delete(
-                            Uri.parse(DatabaseConstants.CONTENT_URI_ITEM + "/" + current_open),   // the user dictionary content URI
-                            null,                    // the column to select on
-                            null                    // the value to compare to
-                    );
-
-                    if (mRowsUpdated != 0) {
-                        reset();
+        Cursor x = (Cursor) this.getListAdapter().getItem(position);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        final AlertDialog alertDialog;
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        current_open = x.getInt(x.getColumnIndex(DatabaseConstants.Item.ID));
+        final View aux = inflater.inflate(R.layout.member_dialog, null);
+        setDialogView(aux, x);
+//         set dialog message
+        alertDialogBuilder.setView(aux)
+                .setCancelable(true)
+                .setNegativeButton(R.string.salir_dialog, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
                         current_open = 0;
-                        alertDialog.cancel();
+                        dialog.cancel();
                     }
-                }
-            });
+                });
 
-            // show it
-            alertDialog.show();
-        }
+        //Listeners
+        ((Button) aux.findViewById(R.id.member_dialog_add)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Editable barcode = ((EditText) aux.findViewById(R.id.member_dialog_barcode)).getText();
+                Date input;
+                Date today;
+                Cursor cursor_item;
+
+                //Comprobar barcode
+                if (!barcode.toString().equals("")) {
+
+                    String selection = String.format("%s LIKE '%s'", DatabaseConstants.Item.BARCODE, barcode.toString());
+                    cursor_item = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_ITEM),
+                            null,
+                            selection,
+                            null,
+                            null);
+
+                    if (cursor_item.getCount() > 0) {
+                        cursor_item.moveToFirst();
+                        //Testing if is on loan
+                        selection = String.format(DatabaseConstants.ACTIVE_LOAN_SELECTION, cursor_item.getInt(cursor_item.getColumnIndex(DatabaseConstants.Item.ID)));
+
+                        Cursor cursor_loan = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),
+                                null,
+                                selection,
+                                null,
+                                null);
+
+                        //if is on loan
+                        if (cursor_loan.getCount() > 0) {
+                            Toast.makeText(getContext(), "EL Item con Barcode = " + barcode.toString() + " se encuentra prestado", Toast.LENGTH_LONG).show();
+                            barcode.clear();
+                            return;
+                        }
+
+                        cursor_loan.close();
+                    } else {
+                        Toast.makeText(getContext(), "EL Item con Barcode = " + barcode.toString() + " no existe", Toast.LENGTH_LONG).show();
+                        barcode.clear();
+                        return;
+                    }
+
+                } else {
+                    Toast.makeText(getContext(), "Rellene el campo Barcode", Toast.LENGTH_LONG).show();
+                    barcode.clear();
+                    return;
+                }
+                Log.d(TAG, barcode.toString());
+
+                //Comprobar fecha
+
+                Editable date = ((EditText) aux.findViewById(R.id.member_dialog_date)).getText();
+                if (!date.toString().equals("")) {
+
+                    ParsePosition error = new ParsePosition(0);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    Calendar calendar = Calendar.getInstance();
+                    input = dateFormat.parse(date.toString(), error);
+                    today = calendar.getTime();
+                    if (error.getErrorIndex() != -1) {
+                        Toast.makeText(getContext(), "EL formato de la fecha no es correcto", Toast.LENGTH_LONG).show();
+                        date.clear();
+                        return;
+                    } else if (!input.after(today)) {
+                        Toast.makeText(getContext(), "La fecha introducida es incorrecta", Toast.LENGTH_LONG).show();
+                        date.clear();
+                        return;
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Rellene el campo Date", Toast.LENGTH_LONG).show();
+                    date.clear();
+                    return;
+                }
+                String title = (String) ((TextView) aux.findViewById(R.id.member_dialog_title)).getText();
+
+                String selection = String.format("%s LIKE '%s'", DatabaseConstants.Member.ALIAS, title);
+                Cursor cursor_member = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER),
+                        null,
+                        selection,
+                        null,
+                        null);
+                cursor_member.moveToFirst();
+
+                ContentValues values = new ContentValues();
+                values.put(DatabaseConstants.Loan.START_OF_LOAN, today.toString());
+                values.put(DatabaseConstants.Loan.END_OF_LOAN, input.toString());
+                values.put(DatabaseConstants.Loan.MEMBER, cursor_member.getInt(cursor_member.getColumnIndex(DatabaseConstants.Member.ID)));
+                values.put(DatabaseConstants.Loan.ITEM, cursor_item.getInt(cursor_item.getColumnIndex(DatabaseConstants.Item.ID)));
+                Uri out = getActivity().getContentResolver().insert(
+                        Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),   // the user dictionary content URI
+                        values                       // the columns to update
+                );
+                cursor_member.close();
+                cursor_item.close();
+                Toast.makeText(getContext(), "Prestamo Creado", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        // create alert dialog
+        alertDialog = alertDialogBuilder.create();
+
+
+        // show it
+        alertDialog.show();
 
     }
 

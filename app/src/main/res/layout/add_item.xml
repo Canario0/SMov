@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="Añadir Item Nuevo"
+        android:text="@string/add_item_title"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="#000"
@@ -28,9 +28,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="Barcode :"
-            android:textColor="#000"
-            android:textSize="20sp"
+            android:text="@string/add_item_barcode"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -44,7 +43,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:hint="Ej: RPI-000"
+                android:hint="@string/add_item_barcode_hint"
+                android:inputType="text"
                 android:text=""
                 android:textAlignment="center" />
 
@@ -69,9 +69,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="Fecha :"
-            android:textColor="#000"
-            android:textSize="20sp"
+            android:text="@string/add_item_date"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -85,7 +84,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:hint="Ej: 10-11-2018"
+                android:hint="@string/add_item_date_hint"
+                android:inputType="date"
                 android:text=""
                 android:textAlignment="center" />
 
@@ -110,9 +110,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="Dueño :"
-            android:textColor="#000"
-            android:textSize="20sp"
+            android:text="@string/add_item_resource"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -158,7 +157,7 @@
                 android:layout_height="60dp"
                 android:gravity="center"
                 android:textAllCaps="false"
-                android:text="Añadir"
+                android:text="@string/add_item_add_button"
                 android:textSize="20sp" />
 
         </LinearLayout>
@@ -177,7 +176,7 @@
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textAllCaps="false"
-                android:text="Cancelar"
+                android:text="@string/add_item_cancel_button"
                 />
         </LinearLayout>
     </LinearLayout>

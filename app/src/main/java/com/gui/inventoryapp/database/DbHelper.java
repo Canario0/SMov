@@ -120,7 +120,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 SQLiteDatabase.CONFLICT_IGNORE);
 
         values.clear();
-        values.put(DatabaseConstants.Item.BARCODE, "1234231323");
+        values.put(DatabaseConstants.Item.BARCODE, "RPI-000");
         values.put(DatabaseConstants.Item.DAMAGED, 0);
         values.put(DatabaseConstants.Item.OWNER, 12);
 
