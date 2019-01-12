@@ -2,14 +2,17 @@ package com.gui.inventoryapp.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +24,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
+import com.gui.inventoryapp.database.DatabaseConstants;
 import com.gui.inventoryapp.utils.BarcodeScanner;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.support.v4.content.ContextCompat.checkSelfPermission;
@@ -55,11 +60,20 @@ public class AddItem extends Fragment {
         cancel_btn = view.findViewById(R.id.cancel_button);
         barscan = new BarcodeScanner(this);
 
-        //TODO: cambiar los ejemplos por datos de la base de datos.
+        final String split_token = "- ";
+
         List<String> list = new ArrayList<String>();
-        list.add("GUI");
-        list.add("Fernando");
-        list.add("Pablo");
+
+        Cursor cursor = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER),
+                null,
+                null,
+                null,
+                DatabaseConstants.Member.ID);
+
+        while(cursor.moveToNext()){
+            list.add(cursor.getLong(cursor.getColumnIndex(DatabaseConstants.Member.ID)) + split_token + cursor.getString(cursor.getColumnIndex(DatabaseConstants.Member.ALIAS)) );
+        }
+
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         owner_sp.setAdapter(dataAdapter);
@@ -85,23 +99,31 @@ public class AddItem extends Fragment {
                     Toast.makeText(getContext(), "Por favor rellene la Fecha.", Toast.LENGTH_LONG).show();
                     return;
                 }
-                /*
+
                 ContentValues values = new ContentValues();
-                values.put(ItemConstants.ITEM.BARCODE, barcode_et.getText().toString());
-                values.put(ItemConstants.ITEM.ENTRY_DATE, date_et.getText().toString());
-                values.put(ItemConstants.ITEM.OWNER, (String) owner_sp.getSelectedItem());
+                values.put(DatabaseConstants.Item.BARCODE, barcode_et.getText().toString());
+                values.put(DatabaseConstants.Item.ENTRY_DATE, date_et.getText().toString());
+
+                long owner_code =
+                        Long.parseLong(((String) owner_sp.getSelectedItem()).split(split_token)[0]);
+
+                Log.d(TAG,owner_code + " ");
+
+                values.put(DatabaseConstants.Item.OWNER, owner_code);
+
+
+
                 Uri out = getActivity().getContentResolver().insert(
-                        ItemConstants.CONTENT_URI,   // the user dictionary content URI
-                        values                       // the columns to update
+                        Uri.parse(DatabaseConstants.CONTENT_URI_ITEM),// the user dictionary content URI
+                        values // the columns to update
                 );
-                *
+
                 if (out != null) {
                     Toast.makeText(getContext(), "Item Añadido", Toast.LENGTH_LONG).show();
                 } else {
-
                     Toast.makeText(getContext(), "El Item ya existe", Toast.LENGTH_LONG).show();
                 }
-                */
+
                 date_et.setText("");
                 barcode_et.setText("");
                 owner_sp.setSelection(0);

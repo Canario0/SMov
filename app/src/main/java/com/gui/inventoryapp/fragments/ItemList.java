@@ -97,6 +97,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
                     null,
                     null);
             Log.d("!--.", String.format("COUNT: %d",cursor.getCount()));
+
             //Si está prestado
             if (cursor.getCount() > 0) {
                 ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_ONLOAN);
@@ -111,7 +112,16 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
 
         ((TextView) aux.findViewById(R.id.added_date)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.ENTRY_DATE)));
 
-        ((TextView) aux.findViewById(R.id.owner_name)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.OWNER)));
+       Cursor cursor = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER + "/" + x.getString(x.getColumnIndex(DatabaseConstants.Item.OWNER))),
+                null,
+                null,
+                null,
+                null);
+
+       if(cursor.getCount() > 0) {
+           cursor.moveToNext();
+           ((TextView) aux.findViewById(R.id.owner_name)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Member.ALIAS)));
+       }
 
     }
 

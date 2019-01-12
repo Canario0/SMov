@@ -89,9 +89,9 @@ public class ItemProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         long rowId = db.insertWithOnConflict(DatabaseConstants.TABLE_ITEM, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         // ¿Se insertó correctamente?
-        if (rowId != -1) {
-            long id = values.getAsLong(DatabaseConstants.Item.ID);
-            ret = ContentUris.withAppendedId(uri, id);
+        if (rowId != -1 ) {
+            //long id = values.getAsLong(DatabaseConstants.Item.ID);
+            ret = uri;
             Log.d(TAG, "uri insertada: " + ret);
             // Notificar que los datos para la URI han cambiado
             getContext().getContentResolver().notifyChange(uri, null);

@@ -30,10 +30,6 @@
         </activity>
         <activity android:name=".activities.SettingsActivity" />
 
-        <activity android:name=".activities.TESTING">
-
-        </activity>
-
         <provider
             android:name=".database.contentProviders.MemberProvider"
             android:authorities="com.gui.inventoryapp.database.contentProviders.MemberProvider"
