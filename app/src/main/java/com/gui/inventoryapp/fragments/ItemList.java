@@ -90,7 +90,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
             ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_DAMAGED);
         } else {
 
-            // Se seleccionan los préstamos que finalizan antes de hoy, para ver si el elemento está disponible
+            // Se seleccionan los préstamos sin devolver
             String selection = String.format(DatabaseConstants.ACTIVE_LOAN_SELECTION,
                     x.getInt(x.getColumnIndex(DatabaseConstants.Item.ID)));
 
