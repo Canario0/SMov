@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,22 +14,34 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name=".activities.home"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".activities.SettingsActivity" />
 
         <provider
-            android:name="com.gui.inventoryapp.contentprovider.ItemProvider"
-            android:authorities="com.gui.inventoryapp.contentprovider.ItemProvider"
+            android:name="com.gui.inventoryapp.database.contentProviders.MemberProvider"
+            android:authorities="com.gui.inventoryapp.database.contentProviders.MemberProvider"
             android:exported="false" />
+
+        <provider
+            android:name="com.gui.inventoryapp.database.contentProviders.ItemProvider"
+            android:authorities="com.gui.inventoryapp.database.contentProviders.ItemProvider"
+            android:exported="false" />
+
+        <provider
+            android:name="com.gui.inventoryapp.database.contentProviders.LoanProvider"
+            android:authorities="com.gui.inventoryapp.database.contentProviders.LoanProvider"
+            android:exported="false" />
+
     </application>
 
 </manifest>

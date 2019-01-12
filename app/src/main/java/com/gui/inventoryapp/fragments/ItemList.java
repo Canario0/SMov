@@ -9,7 +9,9 @@ import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,18 +23,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
-import com.gui.inventoryapp.constant.ItemConstants;
+import com.gui.inventoryapp.database.DatabaseConstants;
+
+import java.util.logging.Logger;
+import java.util.zip.Inflater;
 
 
 public class ItemList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
     private static final String TAG = ItemList.class.getSimpleName();
     private SimpleCursorAdapter mAdapter;
-    private static final String[] FROM = {ItemConstants.ITEM.BARCODE,
-            ItemConstants.ITEM.CONDITION};
+    private static final String[] FROM = {DatabaseConstants.Item.BARCODE,
+            DatabaseConstants.Item.DAMAGED};
     private static final int[] TO = {R.id.item_barcode, R.id.item_condition};
     private static final int LOADER_ID = 42;
-    String current_open = "";
+    private long current_open = 0;
+
+    private static int STATUS_ITEM_DAMAGED = 0;
+    private static int STATUS_ITEM_AVAILABLE = 1;
+    private static int STATUS_ITEM_ONLOAN = 2;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -51,10 +60,11 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         if (i != LOADER_ID)
             return null;
         Log.d(TAG, "onCreateLoader");
+
         if (bundle == null)
-            return new CursorLoader(getActivity(), ItemConstants.CONTENT_URI, null, null, null, ItemConstants.DEFAULT_SORT);
+            return new CursorLoader(getActivity(), Uri.parse(DatabaseConstants.CONTENT_URI_ITEM), null, null, null, DatabaseConstants.DEFAULT_SORT_I);
         else
-            return new CursorLoader(getActivity(), ItemConstants.CONTENT_URI, null, bundle.getString("selection"), null, ItemConstants.DEFAULT_SORT);
+            return new CursorLoader(getActivity(), Uri.parse(DatabaseConstants.CONTENT_URI_ITEM), null, bundle.getString("selection"), null, DatabaseConstants.DEFAULT_SORT_I);
     }
 
     @Override
@@ -70,25 +80,41 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
     }
 
     private void setDialogView(View aux, Cursor x) {
-        ((TextView) aux.findViewById(R.id.item_id)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.ID)));
-        ((TextView) aux.findViewById(R.id.dialog_title)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.BARCODE)));
-        switch (x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION))) {
-            case -1:
-                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION)) + 1);
-                break;
-            case 0:
-                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION)) + 1);
-                break;
-            case 1:
-                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(x.getInt(x.getColumnIndex(ItemConstants.ITEM.CONDITION)) + 1);
-                break;
 
+        //((TextView) aux.findViewById(R.id.item_id)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.ID)));
+
+        ((TextView) aux.findViewById(R.id.dialog_title)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.BARCODE)));
+
+        //Si está averiado
+        if (x.getInt(x.getColumnIndex(DatabaseConstants.Item.DAMAGED)) == 1) {
+            ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_DAMAGED);
+        } else {
+
+            // Se seleccionan los préstamos que finalizan antes de hoy, para ver si el elemento está disponible
+            String selection = String.format(DatabaseConstants.ACTIVE_LOAN_SELECTION,
+                    x.getInt(x.getColumnIndex(DatabaseConstants.Item.ID)));
+
+            Cursor cursor = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),
+                    null,
+                    selection,
+                    null,
+                    null);
+            Log.d("!--.", String.format("COUNT: %d",cursor.getCount()));
+            //Si está prestado
+            if (cursor.getCount() > 0) {
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_ONLOAN);
+                cursor.moveToNext();
+                ((TextView) aux.findViewById(R.id.book_end_date)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.END_OF_LOAN)));
+                ((TextView) aux.findViewById(R.id.rent_user)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.MEMBER)));
+            } else {
+                ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_AVAILABLE);
+            }
+            cursor.close();
         }
 
-        ((TextView) aux.findViewById(R.id.added_date)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.ENTRY_DATE)));
-        ((TextView) aux.findViewById(R.id.book_end_date)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.CHECKOUT_EXPIRE_DATE)));
-        ((TextView) aux.findViewById(R.id.rent_user)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.GIVEN_TO)));
-        ((TextView) aux.findViewById(R.id.owner_name)).setText(x.getString(x.getColumnIndex(ItemConstants.ITEM.OWNER)));
+        ((TextView) aux.findViewById(R.id.added_date)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.ENTRY_DATE)));
+
+        ((TextView) aux.findViewById(R.id.owner_name)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.OWNER)));
 
     }
 
@@ -98,17 +124,17 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         final AlertDialog alertDialog;
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        current_open = x.getString(x.getColumnIndex(ItemConstants.ITEM.BARCODE));
+        current_open = x.getInt(x.getColumnIndex(DatabaseConstants.Item.ID));
         View aux = inflater.inflate(R.layout.item_dialog, null);
         setDialogView(aux, x);
 //         set dialog messag
         alertDialogBuilder.setView(aux)
-                .setCancelable(false)
-                .setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                .setCancelable(true)
+                .setNegativeButton(R.string.salir_dialog, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // if this button is clicked, just close
                         // the dialog box and do nothing
-                        current_open = "";
+                        current_open = 0;
                         dialog.cancel();
                     }
                 });
@@ -117,22 +143,32 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
         alertDialog = alertDialogBuilder.create();
 
         // Listeners
-
         ((Spinner) aux.findViewById(R.id.item_state)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 2) {
+                if (position == STATUS_ITEM_ONLOAN) {
                     Toast.makeText(getActivity(), "No está implementado todavía", Toast.LENGTH_LONG).show();
                 } else {
                     ContentValues values = new ContentValues();
-                    values.putNull(ItemConstants.ITEM.GIVEN_TO);
-                    values.putNull(ItemConstants.ITEM.CHECKOUT_EXPIRE_DATE);
-                    values.put(ItemConstants.ITEM.CONDITION, position - 1);
+                    //values.putNull(DatabaseConstants.Item.GIVEN_TO);
+                    //values.putNull(ItemConstants.ITEM.CHECKOUT_EXPIRE_DATE);
+                    values.put(DatabaseConstants.Item.DAMAGED, Math.abs(position - 1));
+
                     int mRowsUpdated = getActivity().getContentResolver().update(
-                            ItemConstants.CONTENT_URI,   // the user dictionary content URI
+                            Uri.parse(DatabaseConstants.CONTENT_URI_ITEM + "/" + current_open),   // the user dictionary content URI
                             values,                       // the columns to update
-                            ItemConstants.ITEM.BARCODE + " LIKE '" + current_open + "'",                    // the column to select on
+                            null,                    // the column to select on
                             null                    // the value to compare to
+                    );
+
+                    values.clear();
+                    values.put(DatabaseConstants.Loan.RETURNED,1);
+                    String selection = String.format(DatabaseConstants.ACTIVE_LOAN_SELECTION,current_open);
+                    mRowsUpdated += getActivity().getContentResolver().update(
+                            Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),
+                            values,
+                            selection,
+                            null
                     );
 
                     if (mRowsUpdated != 0) {
@@ -151,14 +187,14 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
             @Override
             public void onClick(View v) {
                 int mRowsUpdated = getActivity().getContentResolver().delete(
-                        ItemConstants.CONTENT_URI,   // the user dictionary content URI
-                        ItemConstants.ITEM.BARCODE + " LIKE '" + current_open + "'",                    // the column to select on
+                        Uri.parse(DatabaseConstants.CONTENT_URI_ITEM + "/" + current_open),   // the user dictionary content URI
+                        null,                    // the column to select on
                         null                    // the value to compare to
                 );
 
                 if (mRowsUpdated != 0) {
                     reset();
-                    current_open = "";
+                    current_open = 0;
                     alertDialog.cancel();
                 }
             }
@@ -171,7 +207,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
 
     public void update(String id) {
         Bundle bundle = new Bundle();
-        bundle.putString("selection", ItemConstants.ITEM.BARCODE + " LIKE '" + id + "%'");
+        bundle.putString("selection", DatabaseConstants.Item.BARCODE + " LIKE '" + id + "%'");
         getLoaderManager().restartLoader(LOADER_ID, bundle, this);
     }
 
@@ -182,40 +218,40 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
     class TimelineViewBinder implements SimpleCursorAdapter.ViewBinder {
         @Override
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-            if (view.getId() == R.id.item_state) {
-                switch (cursor.getInt(columnIndex)) {
-                    case -1:
-                        ((Spinner) view.findViewById(R.id.item_state)).setSelection(cursor.getInt(columnIndex) + 1);
-                        break;
-                    case 0:
-                        ((Spinner) view.findViewById(R.id.item_state)).setSelection(cursor.getInt(columnIndex) + 1);
-                        break;
-                    case 1:
-                        ((Spinner) view.findViewById(R.id.item_state)).setSelection(cursor.getInt(columnIndex) + 1);
-                        break;
 
-                }
-                return true;
-            } else if (view.getId() == R.id.item_condition) {
-                switch (cursor.getInt(columnIndex)) {
-                    case -1:
-                        ((TextView) view).setTextColor(Color.parseColor("#DC3545"));
-                        ((TextView) view).setText("averiado");
-                        break;
-                    case 0:
-                        ((TextView) view).setTextColor(Color.parseColor("#28A745"));
-                        ((TextView) view).setText("disponible");
-                        break;
-                    case 1:
-                        ((TextView) view).setTextColor(Color.parseColor("#FFC107"));
-                        ((TextView) view).setText("prestado");
-                        break;
-                }
+            if (view.getId() != R.id.item_condition)
+                return false;
+
+            //Damaged
+            if (cursor.getInt(columnIndex) == 1) {
+                ((TextView) view).setTextColor(ContextCompat.getColor(getContext(), R.color.status_item_damaged));;
+                ((TextView) view).setText(R.string.status_item_damaged);
                 return true;
             }
 
+            //Available
+            ((TextView) view).setTextColor(ContextCompat.getColor(getContext(), R.color.status_item_available));
+            ((TextView) view).setText(R.string.status_item_available);
 
-            return false;
+            //Testing if is on loan
+            String selection = String.format(DatabaseConstants.ACTIVE_LOAN_SELECTION,
+                    cursor.getInt(cursor.getColumnIndex(DatabaseConstants.Item.ID)));
+
+            Cursor cursor_loan = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),
+                    null,
+                    selection,
+                    null,
+                    null);
+
+            //if is on loan
+            if (cursor_loan.getCount() > 0) {
+                ((TextView) view).setTextColor(ContextCompat.getColor(getContext(), R.color.status_item_onLoan));
+                ((TextView) view).setText(R.string.status_item_onLoan);
+            }
+
+            cursor_loan.close();
+
+            return true;
         }
     }
 }

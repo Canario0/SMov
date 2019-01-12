@@ -15,7 +15,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
-import com.gui.inventoryapp.constant.ItemConstants;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -71,7 +70,7 @@ public class AddItem extends Fragment {
                     Toast.makeText(getContext(), "Por favor rellene la Fecha.", Toast.LENGTH_LONG).show();
                     return;
                 }
-
+                /*
                 ContentValues values = new ContentValues();
                 values.put(ItemConstants.ITEM.BARCODE, barcode_et.getText().toString());
                 values.put(ItemConstants.ITEM.ENTRY_DATE, date_et.getText().toString());
@@ -80,13 +79,14 @@ public class AddItem extends Fragment {
                         ItemConstants.CONTENT_URI,   // the user dictionary content URI
                         values                       // the columns to update
                 );
-
+                *
                 if (out != null) {
                     Toast.makeText(getContext(), "Item Añadido", Toast.LENGTH_LONG).show();
                 } else {
 
                     Toast.makeText(getContext(), "El Item ya existe", Toast.LENGTH_LONG).show();
                 }
+                */
                 date_et.setText("");
                 barcode_et.setText("");
                 owner_sp.setSelection(0);

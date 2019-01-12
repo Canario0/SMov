@@ -36,7 +36,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:entries="@array/state_entries"
-            android:textSize="17sp" />
+        android:textSize="17sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -51,7 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Fecha de Inclusión:"
+            android:text="@string/fecha_de_inclusion"
             android:textColor="@color/colorAccent"
             android:textSize="17sp" />
 
@@ -75,7 +75,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Fecha de Fin Prestamo:"
+            android:text="@string/fecha_de_fin_prestamo"
             android:textColor="@color/colorAccent"
             android:textSize="17sp" />
 
@@ -100,7 +100,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Dueño:"
+            android:text="@string/owner"
             android:textColor="@color/colorAccent"
             android:textSize="17sp" />
 
@@ -124,7 +124,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Prestado a:"
+            android:text="@string/prestado_a"
             android:textColor="@color/colorAccent"
             android:textSize="17sp" />
 
