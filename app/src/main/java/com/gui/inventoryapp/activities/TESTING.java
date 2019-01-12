@@ -87,7 +87,7 @@ public class TESTING extends AppCompatActivity {
                     // Continue only if the File was successfully created
                     if (photoFile != null) {
                         Uri photoURI = FileProvider.getUriForFile(act,
-                                "com.example.android.fileprovider",
+                                "com.gui.inventoryapp.fileprovider",
                                 photoFile);
 
                         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -104,7 +104,7 @@ public class TESTING extends AppCompatActivity {
                 R.drawable.cap1);
        // myImageView.setImageBitmap(myBitmap);
 
-        BarcodeDetector detector = new BarcodeDetector.Builder(getApplicationContext())
+        BarcodeScanner detector = new BarcodeScanner.Builder(getApplicationContext())
                                         .setBarcodeFormats(Barcode.CODE_39)
                                         .build();
 
@@ -173,7 +173,6 @@ public class TESTING extends AppCompatActivity {
 
         }
     }
-
     String mCurrentPhotoPath;
 
     @Override
