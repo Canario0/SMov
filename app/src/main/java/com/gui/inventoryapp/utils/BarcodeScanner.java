@@ -74,6 +74,10 @@ public class BarcodeScanner implements View.OnClickListener {
 
     public static String getBarCode(String mCurrentPhotoPath, Context context){
 
+        //if photo path is not set
+        if(mCurrentPhotoPath == null)
+            return null;
+
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
 
         //Delete the file
@@ -124,11 +128,12 @@ public class BarcodeScanner implements View.OnClickListener {
                 return;
             }
 
+            setPath(img.getAbsolutePath());
+            Log.d(TAG, "PATH = " + getPath());
+
             Uri photoURI = FileProvider.getUriForFile(getFragment().getContext(),
                     GeneralConstants.FILE_PROVIDER,
                     img);
-
-            setPath(img.getAbsolutePath());
 
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             getFragment().startActivityForResult(cameraIntent, CAMERA_REQUEST);
