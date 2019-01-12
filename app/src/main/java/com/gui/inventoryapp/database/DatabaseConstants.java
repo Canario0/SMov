@@ -41,8 +41,7 @@ public class DatabaseConstants {
     public static final int CASE_LOAN = 2;
 
     public static final String ACTIVE_LOAN_SELECTION = DatabaseConstants.Loan.ITEM + "=" + "%d"
-            + " and " + DatabaseConstants.Loan.END_OF_LOAN + " >= " + "CURRENT_DATE" + " and " +
-            DatabaseConstants.Loan.RETURNED + "=" + "0";
+            + " and "  + DatabaseConstants.Loan.RETURNED + "=" + "0";
 
 
     public class Item {
