@@ -1,10 +1,8 @@
 package com.gui.inventoryapp.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,16 +12,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.fragments.AddItem;
 import com.gui.inventoryapp.fragments.ItemList;
+import com.gui.inventoryapp.fragments.MemberList;
+import com.gui.inventoryapp.interfaces.ListCommon;
+
 
 public class home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -56,7 +54,7 @@ public class home extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 SearchView search_bar = findViewById(R.id.search_bar);
-                ItemList x = (ItemList) getFragmentManager().findFragmentByTag(current_fragment);
+                ListCommon x = (ListCommon) getFragmentManager().findFragmentByTag(current_fragment);
                 x.reset();
                 search_bar.setQuery("", false);
                 search_bar.clearFocus();
@@ -68,9 +66,9 @@ public class home extends AppCompatActivity
         search_bar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                ItemList x = (ItemList) getFragmentManager().findFragmentByTag(current_fragment);
-                x.update(query);
-                return true;
+                    ListCommon x = (ListCommon) getFragmentManager().findFragmentByTag(current_fragment);
+                    x.update(query);
+                    return true;
             }
 
             @Override
@@ -136,7 +134,6 @@ public class home extends AppCompatActivity
 
         if (id == R.id.item_list) {
             if (current_selected != R.id.item_list) {
-//                getFragmentManager().beginTransaction().remove(this.getFragmentManager().findFragmentByTag(current_fragment)).commit();
                 search_combo.setVisibility(View.VISIBLE);
                 ItemList fragment = new ItemList();
                 current_fragment = fragment.getClass().getSimpleName();
@@ -151,7 +148,6 @@ public class home extends AppCompatActivity
             return true;
         } else if (id == R.id.add_item) {
             if (current_selected != R.id.add_item) {
-//                getFragmentManager().beginTransaction().remove(this.getFragmentManager().findFragmentByTag(current_fragment)).commit();
                 search_combo.setVisibility(View.GONE);
                 AddItem fragment = new AddItem();
                 current_fragment = fragment.getClass().getSimpleName();
@@ -164,6 +160,19 @@ public class home extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.search_member) {
+            if (current_selected != R.id.search_member) {
+                search_combo.setVisibility(View.VISIBLE);
+                MemberList fragment = new MemberList();
+                current_fragment = fragment.getClass().getSimpleName();
+                Log.d("LOS PACHA", current_fragment);
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content, fragment, current_fragment)
+                        .commit();
+                current_selected = R.id.search_member;
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
         } else if (id == R.id.new_checkouts) {
         } else if (id == R.id.close_to_end_checkouts) {
         }

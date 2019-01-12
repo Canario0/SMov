@@ -95,13 +95,26 @@ public class DbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.clear();
-        values.put(DatabaseConstants.Member.ID, 1);
+        values.put(DatabaseConstants.Member.ID, 2);
         values.put(DatabaseConstants.Member.ALIAS, "MIGUELIO");
         values.put(DatabaseConstants.Member.DNI, "1223R");
         values.put(DatabaseConstants.Member.NAME, "Miguel");
         values.put(DatabaseConstants.Member.LASTNAME, "Ranero");
         values.put(DatabaseConstants.Member.EMAIL, "miguel@uva.es");
         values.put(DatabaseConstants.Member.PHONE, "+1555123453");
+
+        db.insertWithOnConflict(DatabaseConstants.TABLE_MEMBER, null, values,
+                SQLiteDatabase.CONFLICT_IGNORE);
+
+
+        values.clear();
+        values.put(DatabaseConstants.Member.ID, 1);
+        values.put(DatabaseConstants.Member.ALIAS, "gui");
+        values.put(DatabaseConstants.Member.DNI, "");
+        values.put(DatabaseConstants.Member.NAME, "Grupo Universitario Informática");
+        values.put(DatabaseConstants.Member.LASTNAME, "");
+        values.put(DatabaseConstants.Member.EMAIL, "");
+        values.put(DatabaseConstants.Member.PHONE, "");
 
         db.insertWithOnConflict(DatabaseConstants.TABLE_MEMBER, null, values,
                 SQLiteDatabase.CONFLICT_IGNORE);
@@ -115,7 +128,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 SQLiteDatabase.CONFLICT_IGNORE);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd", Locale.getDefault());
+                "dd-MM-yyyy", Locale.getDefault());
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 2019);
