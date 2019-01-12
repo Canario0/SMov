@@ -188,6 +188,16 @@ public class TESTING extends AppCompatActivity {
             Log.d("!--.", " " + mCurrentPhotoPath);
 
             Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+
+            File fdelete = new File(mCurrentPhotoPath);
+            if (fdelete.exists()) {
+                if (fdelete.delete()) {
+                    Log.d("!--.", " Borrado correcto");
+                } else {
+                    Log.d("!--.", " Borrado fallido");
+                }
+            }
+
             imageView.setImageBitmap(bitmap);
 
 
