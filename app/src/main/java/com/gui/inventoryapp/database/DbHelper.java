@@ -110,7 +110,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.clear();
         values.put(DatabaseConstants.Member.ID, 1);
         values.put(DatabaseConstants.Member.ALIAS, "gui");
-        values.put(DatabaseConstants.Member.DNI, "");
+        values.put(DatabaseConstants.Member.DNI, "0");
         values.put(DatabaseConstants.Member.NAME, "Grupo Universitario Informática");
         values.put(DatabaseConstants.Member.LASTNAME, "");
         values.put(DatabaseConstants.Member.EMAIL, "");

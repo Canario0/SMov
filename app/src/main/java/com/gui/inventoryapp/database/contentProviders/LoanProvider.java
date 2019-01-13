@@ -94,6 +94,7 @@ public class LoanProvider extends ContentProvider {
         if (rowId != -1) {
             //long id = values.getAsLong(DatabaseConstants.loan.ID);
             //ret = ContentUris.withAppendedId(uri, id);
+            ret = uri;
             Log.d(TAG, "uri insertada");
             // Notificar que los datos para la URI han cambiado
             getContext().getContentResolver().notifyChange(uri, null);

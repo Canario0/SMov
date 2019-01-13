@@ -40,7 +40,7 @@ public class LoanList extends ListFragment implements LoaderManager.LoaderCallba
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setEmptyText("No hay prestamos...");
+        setEmptyText("No hay préstamos nuevos...");
         mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.loan, null, FROM, TO, 0);
         mAdapter.setViewBinder(new TimelineViewBinder());
         setListAdapter(mAdapter);

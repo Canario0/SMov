@@ -1,17 +1,20 @@
 package com.gui.inventoryapp.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,6 +33,7 @@ import android.widget.Toast;
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.database.DatabaseConstants;
 import com.gui.inventoryapp.interfaces.ListCommon;
+import com.gui.inventoryapp.utils.BarcodeScanner;
 
 import org.w3c.dom.Text;
 
@@ -38,6 +42,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import static com.gui.inventoryapp.utils.GeneralConstants.CAMERA_REQUEST;
+import static com.gui.inventoryapp.utils.GeneralConstants.MY_CAMERA_PERMISSION_CODE;
 
 
 public class MemberList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, ListCommon {
@@ -48,7 +55,11 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
             DatabaseConstants.Member.NAME};
     private static final int[] TO = {R.id.member_alias, R.id.member_name};
     private static final int LOADER_ID = 43;
+    private BarcodeScanner barscan;
     private long current_open = 0;
+
+    private ImageView image_barcode;
+    private TextView item_barcode;
 
     private static int STATUS_ITEM_DAMAGED = 0;
     private static int STATUS_ITEM_AVAILABLE = 1;
@@ -63,6 +74,7 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
         setListAdapter(mAdapter);
         getListView().setOnItemClickListener(this);
         getLoaderManager().initLoader(LOADER_ID, null, this);
+        barscan = new BarcodeScanner(this);
     }
 
 
@@ -224,6 +236,11 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
             }
         });
 
+        image_barcode = ((ImageView)aux.findViewById(R.id.scan_barcode));
+        item_barcode = ((TextView)aux.findViewById(R.id.member_dialog_barcode));
+        //Barcode
+        image_barcode.setOnClickListener(barscan);
+
         // create alert dialog
         alertDialog = alertDialogBuilder.create();
 
@@ -255,6 +272,41 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
             ((TextView) view).setText(String.format("%s %s", cursor.getString(2), cursor.getString(3)));
 
             return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch(requestCode) {
+            case MY_CAMERA_PERMISSION_CODE:
+                if(image_barcode != null)
+                    image_barcode.performClick();
+                break;
+
+            default:
+                throw new UnsupportedOperationException();
+        }
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //No se realiza ninguna acción
+        if(resultCode != Activity.RESULT_OK)
+            return;
+
+        switch(requestCode) {
+            case CAMERA_REQUEST:
+                String str = BarcodeScanner.getBarCode(barscan.getPath(),getContext());
+                if(str != null && item_barcode != null)
+                    item_barcode.setText(str); //Colocamos el texto en el campo
+                else
+                    Toast.makeText(getContext(), "No se reconoce ningún código de barras code_39", Toast.LENGTH_LONG).show();
+                break;
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 }

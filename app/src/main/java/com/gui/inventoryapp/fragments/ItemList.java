@@ -96,6 +96,7 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
                     null,
                     null);
             Log.d("!--.", String.format("COUNT: %d",cursor.getCount()));
+
             //Si está prestado
             if (cursor.getCount() > 0) {
                 ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_ONLOAN);
@@ -110,7 +111,16 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
 
         ((TextView) aux.findViewById(R.id.added_date)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.ENTRY_DATE)));
 
-        ((TextView) aux.findViewById(R.id.owner_name)).setText(x.getString(x.getColumnIndex(DatabaseConstants.Item.OWNER)));
+       Cursor cursor = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER + "/" + x.getString(x.getColumnIndex(DatabaseConstants.Item.OWNER))),
+                null,
+                null,
+                null,
+                null);
+
+       if(cursor.getCount() > 0) {
+           cursor.moveToNext();
+           ((TextView) aux.findViewById(R.id.owner_name)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Member.ALIAS)));
+       }
 
     }
 
@@ -140,10 +150,12 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
 
         // Listeners
         ((Spinner) aux.findViewById(R.id.item_state)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public boolean selected = false;
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(selected == false) {selected = true; return;} //First
                 if (position == STATUS_ITEM_ONLOAN) {
-                    Toast.makeText(getActivity(), "No está implementado todavía", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "No está implementado todavía. Nuevos préstamos en: Miembros->click en miembro", Toast.LENGTH_LONG).show();
                 } else {
                     ContentValues values = new ContentValues();
                     //values.putNull(DatabaseConstants.Item.GIVEN_TO);
@@ -177,6 +189,8 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
+
+
         });
 
         ((ImageView) aux.findViewById(R.id.delete_item)).setOnClickListener(new View.OnClickListener() {

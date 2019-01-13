@@ -5,6 +5,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera"></uses-feature>
 
     <application
         android:allowBackup="true"
@@ -23,25 +26,32 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
+        </activity>
         <activity android:name=".activities.SettingsActivity" />
 
         <provider
-            android:name="com.gui.inventoryapp.database.contentProviders.MemberProvider"
+            android:name=".database.contentProviders.MemberProvider"
             android:authorities="com.gui.inventoryapp.database.contentProviders.MemberProvider"
             android:exported="false" />
-
         <provider
-            android:name="com.gui.inventoryapp.database.contentProviders.ItemProvider"
+            android:name=".database.contentProviders.ItemProvider"
             android:authorities="com.gui.inventoryapp.database.contentProviders.ItemProvider"
             android:exported="false" />
-
         <provider
-            android:name="com.gui.inventoryapp.database.contentProviders.LoanProvider"
+            android:name=".database.contentProviders.LoanProvider"
             android:authorities="com.gui.inventoryapp.database.contentProviders.LoanProvider"
             android:exported="false" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.gui.inventoryapp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
     </application>
 
 </manifest>
