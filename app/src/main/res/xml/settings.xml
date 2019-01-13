@@ -3,5 +3,6 @@
     <EditTextPreference
         android:key="endpoint"
         android:summary="@string/summaryEndpoint"
-        android:title="@string/titleEndpoint"/>
+        android:title="@string/titleEndpoint"
+        android:defaultValue="https://gui.uva.es/guinetv3/members"/>
 </PreferenceScreen>

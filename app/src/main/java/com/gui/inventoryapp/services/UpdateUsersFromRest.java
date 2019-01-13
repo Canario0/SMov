@@ -95,7 +95,7 @@ public class UpdateUsersFromRest extends IntentService {
                     Uri uri = getContentResolver().insert(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER),values);
 
                     if(uri == null){
-                        Log.d(TAG, "User is on db.. Updating...");
+                        //Log.d(TAG, "User is on db.. Updating...");
 
                         values.clear();
                         values.put(DatabaseConstants.Member.NAME, (String)obj.get(DatabaseConstants.Member.NAME));
