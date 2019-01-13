@@ -122,7 +122,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.clear();
         values.put(DatabaseConstants.Item.BARCODE, "RPI-000");
         values.put(DatabaseConstants.Item.DAMAGED, 0);
-        values.put(DatabaseConstants.Item.OWNER, 12);
+        values.put(DatabaseConstants.Item.OWNER, 0);
 
         db.insertWithOnConflict(DatabaseConstants.TABLE_ITEM, null, values,
                 SQLiteDatabase.CONFLICT_IGNORE);
