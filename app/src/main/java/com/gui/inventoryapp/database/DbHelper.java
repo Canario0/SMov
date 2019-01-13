@@ -26,7 +26,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         String member_table_sql = String.format("CREATE TABLE %s (" +
-                        "%s INTEGER PRIMARY KEY NOT NULL," + //id
+                        "%s INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," + //id
                         "%s TEXT NOT NULL UNIQUE," + //alias
                         "%s TEXT NOT NULL," + //name
                         "%s TEXT NOT NULL," + //lastname
@@ -95,7 +95,7 @@ public class DbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.clear();
-        values.put(DatabaseConstants.Member.ID, 2);
+        values.put(DatabaseConstants.Member.ID, 1);
         values.put(DatabaseConstants.Member.ALIAS, "MIGUELIO");
         values.put(DatabaseConstants.Member.DNI, "1223R");
         values.put(DatabaseConstants.Member.NAME, "Miguel");
@@ -108,7 +108,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
         values.clear();
-        values.put(DatabaseConstants.Member.ID, 1);
+        values.put(DatabaseConstants.Member.ID, 0);
         values.put(DatabaseConstants.Member.ALIAS, "gui");
         values.put(DatabaseConstants.Member.DNI, "0");
         values.put(DatabaseConstants.Member.NAME, "Grupo Universitario Informática");
@@ -144,14 +144,10 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.insertWithOnConflict(DatabaseConstants.TABLE_LOAN, null, values,
                 SQLiteDatabase.CONFLICT_IGNORE);
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //db.execSQL("drop table if exists " + DatabaseConstants.TABLE);
-        // Creamos una base de datos nueva
-        onCreate(db);
         Log.d(TAG, "onUpgrade");
 
     }

@@ -40,7 +40,6 @@ public class AddItem extends Fragment {
 
     private final String TAG = this.getClass().getSimpleName();
     private EditText barcode_et;
-    private EditText date_et;
     private Spinner owner_sp;
     private ImageView scan_btn;
     private Button accept_btn;
@@ -53,7 +52,6 @@ public class AddItem extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.add_item, container, false);
         barcode_et = view.findViewById(R.id.barcode_input);
-        date_et = view.findViewById(R.id.input_date);
         owner_sp = view.findViewById(R.id.owner_spinner);
         scan_btn = view.findViewById(R.id.scan_barcode);
         accept_btn = view.findViewById(R.id.add_item_button);
@@ -81,7 +79,6 @@ public class AddItem extends Fragment {
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                date_et.setText("");
                 barcode_et.setText("");
                 owner_sp.setSelection(0);
             }
@@ -95,14 +92,9 @@ public class AddItem extends Fragment {
                     Toast.makeText(getContext(), "Por favor rellene el Barcode.", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if (date_et.getText().toString().equals("")) {
-                    Toast.makeText(getContext(), "Por favor rellene la Fecha.", Toast.LENGTH_LONG).show();
-                    return;
-                }
 
                 ContentValues values = new ContentValues();
                 values.put(DatabaseConstants.Item.BARCODE, barcode_et.getText().toString());
-                values.put(DatabaseConstants.Item.ENTRY_DATE, date_et.getText().toString());
 
                 long owner_code =
                         Long.parseLong(((String) owner_sp.getSelectedItem()).split(split_token)[0]);
@@ -110,7 +102,6 @@ public class AddItem extends Fragment {
                 Log.d(TAG,owner_code + " ");
 
                 values.put(DatabaseConstants.Item.OWNER, owner_code);
-
 
 
                 Uri out = getActivity().getContentResolver().insert(
@@ -123,8 +114,6 @@ public class AddItem extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "El Item ya existe", Toast.LENGTH_LONG).show();
                 }
-
-                date_et.setText("");
                 barcode_et.setText("");
                 owner_sp.setSelection(0);
             }
