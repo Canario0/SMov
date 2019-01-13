@@ -33,7 +33,7 @@ public class UpdateUsersFromRest extends IntentService {
     static final String TAG = "UpdateUsersFromRest";
     static final int DELAY = 180000;
     private boolean runFlag = false;
-    static String default_endpoint = "https://gui.uva.es/guinetv3/";
+    static String default_endpoint = "https://gui.uva.es/guinetv3/members";
 
     public UpdateUsersFromRest() {
         super(TAG);
@@ -51,21 +51,22 @@ public class UpdateUsersFromRest extends IntentService {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String main_url = prefs.getString("endpoint", default_endpoint);
         runFlag = true;
+
         while (runFlag) {
             // Create URL
-            URL githubEndpoint = null;
+            URL gui_endpoint = null;
             try {
-                githubEndpoint = new URL("https://gui.uva.es/guinetv3/members");
+                gui_endpoint = new URL(main_url);
 
                 HttpsURLConnection myConnection = null;
                 // Create connection
                 myConnection =
-                        (HttpsURLConnection) githubEndpoint.openConnection();
+                        (HttpsURLConnection) gui_endpoint.openConnection();
 
 
-                myConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
+                myConnection.setRequestProperty("User-Agent", "com.gui.inventoryapp");
                 myConnection.setRequestProperty("Accept",
-                        "application/vnd.github.v3+json");
+                        "application/json");
 
                 if (myConnection.getResponseCode() == 200) {
                     Log.d(TAG, "Conexión buena");
@@ -78,13 +79,6 @@ public class UpdateUsersFromRest extends IntentService {
 
                 JSONParser jsonParser = new JSONParser();
                 JSONArray jsonArray = (JSONArray) jsonParser.parse(responseBodyReader);
-
-                //Erase database except two first items
-
-                /*
-                String where = DatabaseConstants.Member.ID + "> 1";
-                getContentResolver().delete(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER),where,null);
-                 */
 
                 ContentValues values = new ContentValues();
 
