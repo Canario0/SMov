@@ -220,6 +220,7 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                         Uri.parse(DatabaseConstants.CONTENT_URI_LOAN),   // the user dictionary content URI
                         values                       // the columns to update
                 );
+
                 cursor_member.close();
                 cursor_item.close();
                 Toast.makeText(getContext(), R.string.loan_created, Toast.LENGTH_LONG).show();

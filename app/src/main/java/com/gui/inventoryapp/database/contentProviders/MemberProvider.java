@@ -58,8 +58,6 @@ public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable S
     SQLiteDatabase db = dbHelper.getReadableDatabase();
     Cursor cursor = db.query(DatabaseConstants.TABLE_MEMBER, projection, where, selectionArgs, null, null, orderBy);
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
-    Log.d(TAG,  cursor.getCount() + " registros recuperados");
-    db.close();
     return cursor;
 
 }

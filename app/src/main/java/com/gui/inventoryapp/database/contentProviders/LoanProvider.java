@@ -58,8 +58,6 @@ public class LoanProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(DatabaseConstants.TABLE_LOAN, projection, where, selectionArgs, null, null, orderBy);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
-        Log.d(TAG,  cursor.getCount() + " registros recuperados");
-        db.close();
         return cursor;
 
     }
