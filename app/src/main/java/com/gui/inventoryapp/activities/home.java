@@ -23,6 +23,7 @@ import com.gui.inventoryapp.fragments.ItemList;
 import com.gui.inventoryapp.fragments.LoanList;
 import com.gui.inventoryapp.fragments.MemberList;
 import com.gui.inventoryapp.interfaces.ListCommon;
+import com.gui.inventoryapp.services.UpdateUsersFromRest;
 
 
 public class home extends AppCompatActivity
@@ -41,6 +42,9 @@ public class home extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
+
+        //iniciamos el servicio
+        startService(new Intent(this, UpdateUsersFromRest.class));
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -195,5 +199,11 @@ public class home extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(this, UpdateUsersFromRest.class));
+        super.onDestroy();
     }
 }

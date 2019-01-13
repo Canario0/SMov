@@ -91,8 +91,8 @@ public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
     long rowId = db.insertWithOnConflict(DatabaseConstants.TABLE_MEMBER, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     // ¿Se insertó correctamente?
     if (rowId != -1) {
-        long id = values.getAsLong(DatabaseConstants.Member.ID);
-        ret = ContentUris.withAppendedId(uri, id);
+        //long id = values.getAsLong(DatabaseConstants.Member.ID);
+        ret = uri;
         Log.d(TAG, "uri insertada: " + ret);
         // Notificar que los datos para la URI han cambiado
         getContext().getContentResolver().notifyChange(uri, null);
@@ -103,7 +103,29 @@ public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
 
 @Override
 public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-    throw new UnsupportedOperationException();
+    String where;
+    switch (sURIMatcher.match(uri)) {
+        case DatabaseConstants.CASE_MEMBERS:
+            where = selection;
+            break;
+        case DatabaseConstants.CASE_MEMBER:
+            long id = ContentUris.parseId(uri);
+            where = DatabaseConstants.Member.ID
+                    + "="
+                    + id
+                    + (TextUtils.isEmpty(selection) ? "" : " and ( " + selection + " )");
+            break;
+        default:
+            throw new IllegalArgumentException("uri incorrecta: " + uri);
+    }
+    SQLiteDatabase db = dbHelper.getWritableDatabase();
+    int ret = db.delete(DatabaseConstants.TABLE_MEMBER, where, selectionArgs);
+    if (ret > 0) {
+        getContext().getContentResolver().notifyChange(uri, null);
+    }
+    Log.d(TAG, "registros borrados: " + ret);
+    db.close();
+    return ret;
 }
 
 @Override
