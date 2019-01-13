@@ -128,7 +128,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 SQLiteDatabase.CONFLICT_IGNORE);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "dd-MM-yyyy", Locale.getDefault());
+                "yyyy-MM-dd", Locale.getDefault());
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 2019);

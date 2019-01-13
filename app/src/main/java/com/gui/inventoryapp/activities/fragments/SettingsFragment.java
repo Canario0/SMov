@@ -1,4 +1,4 @@
-package com.gui.inventoryapp.fragments;
+package com.gui.inventoryapp.activities.fragments;
 
 
 import android.content.SharedPreferences;

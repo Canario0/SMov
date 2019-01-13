@@ -1,17 +1,13 @@
-package com.gui.inventoryapp.fragments;
+package com.gui.inventoryapp.activities.fragments;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,12 +23,9 @@ import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.database.DatabaseConstants;
 import com.gui.inventoryapp.utils.BarcodeScanner;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static android.support.v4.content.ContextCompat.checkSelfPermission;
 import static com.gui.inventoryapp.utils.GeneralConstants.CAMERA_REQUEST;
 import static com.gui.inventoryapp.utils.GeneralConstants.MY_CAMERA_PERMISSION_CODE;
 
@@ -89,7 +82,7 @@ public class AddItem extends Fragment {
             public void onClick(View v) {
 
                 if (barcode_et.getText().toString().equals("")) {
-                    Toast.makeText(getContext(), "Por favor rellene el Barcode.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.warning_barcode_empty, Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -110,9 +103,9 @@ public class AddItem extends Fragment {
                 );
 
                 if (out != null) {
-                    Toast.makeText(getContext(), "Item Añadido", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.item_added, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getContext(), "El Item ya existe", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.warning_item_exists, Toast.LENGTH_LONG).show();
                 }
                 barcode_et.setText("");
                 owner_sp.setSelection(0);
@@ -151,7 +144,7 @@ public class AddItem extends Fragment {
                 if(str != null)
                     barcode_et.setText(str); //Colocamos el texto en el campo
                 else
-                    Toast.makeText(getContext(), "No se reconoce ningún código de barras code_39", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.code_bar_not_recognized, Toast.LENGTH_LONG).show();
                 break;
             default:
                 throw new UnsupportedOperationException();

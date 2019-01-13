@@ -1,9 +1,12 @@
 package com.gui.inventoryapp.activities;
-
+/**
+ * @author Pablo Renero Balgañón, pabrene
+ * @author Fernando Alonso Pastor, feralon
+ */
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.gui.inventoryapp.fragments.SettingsFragment;
+import com.gui.inventoryapp.activities.fragments.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
 

@@ -1,5 +1,10 @@
 package com.gui.inventoryapp.activities;
 
+/**
+ * @author Pablo Renero Balgañón, pabrene
+ * @author Fernando Alonso Pastor, feralon
+ */
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -18,15 +23,16 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
-import com.gui.inventoryapp.fragments.AddItem;
-import com.gui.inventoryapp.fragments.ItemList;
-import com.gui.inventoryapp.fragments.LoanList;
-import com.gui.inventoryapp.fragments.MemberList;
-import com.gui.inventoryapp.interfaces.ListCommon;
+import com.gui.inventoryapp.activities.fragments.AddItem;
+import com.gui.inventoryapp.activities.fragments.ItemList;
+import com.gui.inventoryapp.activities.fragments.LoanList;
+import com.gui.inventoryapp.activities.fragments.MemberList;
+import com.gui.inventoryapp.utils.interfaces.ListCommon;
 import com.gui.inventoryapp.services.UpdateUsersFromRest;
 
 
-public class home extends AppCompatActivity
+
+public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private String current_fragment;
     private DrawerLayout drawer;
@@ -193,7 +199,7 @@ public class home extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             return true;
         } else if (id == R.id.close_to_end_checkouts) {
-            Toast.makeText(this, "No está implementado todavía", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.not_implemented, Toast.LENGTH_LONG).show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

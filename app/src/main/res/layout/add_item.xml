@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragments.AddItem">
+    tools:context=".activities.fragments.AddItem">
 
     <TextView
         android:layout_width="match_parent"

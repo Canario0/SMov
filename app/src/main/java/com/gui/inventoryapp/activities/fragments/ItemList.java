@@ -1,4 +1,4 @@
-package com.gui.inventoryapp.fragments;
+package com.gui.inventoryapp.activities.fragments;
 
 import android.app.AlertDialog;
 import android.app.ListFragment;
@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.database.DatabaseConstants;
-import com.gui.inventoryapp.interfaces.ListCommon;
+import com.gui.inventoryapp.utils.interfaces.ListCommon;
 
 
 public class ItemList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, ListCommon {
@@ -95,14 +95,30 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
                     selection,
                     null,
                     null);
-            Log.d("!--.", String.format("COUNT: %d",cursor.getCount()));
+            Log.d(TAG, String.format("COUNT: %d",cursor.getCount()));
 
             //Si está prestado
             if (cursor.getCount() > 0) {
                 ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_ONLOAN);
                 cursor.moveToNext();
                 ((TextView) aux.findViewById(R.id.book_end_date)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.END_OF_LOAN)));
-                ((TextView) aux.findViewById(R.id.rent_user)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.MEMBER)));
+
+                // Get Alias del dueño del préstamos
+                Cursor cursorAlias = getActivity().getContentResolver().query(Uri.parse(DatabaseConstants.CONTENT_URI_MEMBER + "/" + cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.MEMBER))),
+                        null,
+                        null,
+                        null,
+                        null);
+
+                 if(cursorAlias != null && cursorAlias.getCount() > 0) {
+                     cursorAlias.moveToNext();
+                     ((TextView) aux.findViewById(R.id.rent_user)).setText(cursorAlias.getString(cursorAlias.getColumnIndex(DatabaseConstants.Member.ALIAS)));
+                     cursorAlias.close();
+                 }
+                 else{
+                     ((TextView) aux.findViewById(R.id.rent_user)).setText(cursor.getString(cursor.getColumnIndex(DatabaseConstants.Loan.MEMBER)));
+                 }
+
             } else {
                 ((Spinner) aux.findViewById(R.id.item_state)).setSelection(STATUS_ITEM_AVAILABLE);
             }
@@ -155,11 +171,9 @@ public class ItemList extends ListFragment implements LoaderManager.LoaderCallba
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(selected == false) {selected = true; return;} //First
                 if (position == STATUS_ITEM_ONLOAN) {
-                    Toast.makeText(getActivity(), "No está implementado todavía. Nuevos préstamos en: Miembros->click en miembro", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), R.string.not_implemented_loan, Toast.LENGTH_LONG).show();
                 } else {
                     ContentValues values = new ContentValues();
-                    //values.putNull(DatabaseConstants.Item.GIVEN_TO);
-                    //values.putNull(ItemConstants.ITEM.CHECKOUT_EXPIRE_DATE);
                     values.put(DatabaseConstants.Item.DAMAGED, Math.abs(position - 1));
 
                     int mRowsUpdated = getActivity().getContentResolver().update(

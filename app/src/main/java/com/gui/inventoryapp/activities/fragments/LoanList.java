@@ -1,30 +1,21 @@
-package com.gui.inventoryapp.fragments;
+package com.gui.inventoryapp.activities.fragments;
 
-import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.app.LoaderManager;
-import android.content.ContentValues;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.database.DatabaseConstants;
-import com.gui.inventoryapp.interfaces.ListCommon;
+import com.gui.inventoryapp.utils.interfaces.ListCommon;
 
 
 public class LoanList extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor>{

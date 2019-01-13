@@ -17,7 +17,27 @@
     <string name="aceptar_dialog">Añadir Préstamo</string>
 
 
-    <!-- Strings related to Settings -->
+    <!-- Strings for toasts and code -->
+    <string name="warning_date_empty">Por favor rellene el campo Date.</string>
+    <string name="warning_barcode_empty">Por favor rellene el campo Barcode.</string>
+    <string name="warning_item_exists">El Item ya existe.</string>
+    <string name="warning_date_format">EL formato de la fecha no es correcto</string>
+    <string name="warning_date_notvalid">La fecha introducida es incorrecta</string>
+
+    <string name="item_added">"Item Añadido.</string>
+    <string name="code_bar_not_recognized">No se reconoce ningún código de barras code_39.</string>
+    <string name="not_implemented_loan">No está implementado todavía. Nuevos préstamos en: Miembros->click en miembro.</string>
+    <string name="not_implemented">No está implementado todavía.</string>
+    <string name="loan_created"> Prestamo Creado</string>
+
+
+    <string name="item_with_barcode">EL Item con Barcode = </string>
+    <string name="item_with_barcode_onloan"> se encuentra prestado</string>
+    <string name="item_with_barcode_notExists"> no existe</string>
+
+
+
+
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
@@ -106,7 +126,7 @@
     <string name="add_item_barcode">Barcode :</string>
     <string name="add_item_barcode_hint">Ej: RPI-000</string>
     <string name="add_item_date">Fecha :</string>
-    <string name="add_item_date_hint">Ej: 10-11-2018</string>
+    <string name="add_item_date_hint">Ej: 2018-10-25</string>
     <string name="add_item_resource">Dueño :</string>
     <string name="add_item_add_button">Añadir</string>
     <string name="add_item_cancel_button">Cancelar</string>

@@ -1,4 +1,4 @@
-package com.gui.inventoryapp.fragments;
+package com.gui.inventoryapp.activities.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,14 +10,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,16 +22,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gui.inventoryapp.R;
 import com.gui.inventoryapp.database.DatabaseConstants;
-import com.gui.inventoryapp.interfaces.ListCommon;
+import com.gui.inventoryapp.utils.interfaces.ListCommon;
 import com.gui.inventoryapp.utils.BarcodeScanner;
-
-import org.w3c.dom.Text;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -141,7 +134,7 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                 Date input;
                 Date today;
                 Cursor cursor_item;
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                 //Comprobar barcode
                 if (!barcode.toString().equals("")) {
@@ -166,27 +159,26 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
 
                         //if is on loan
                         if (cursor_loan.getCount() > 0) {
-                            Toast.makeText(getContext(), "EL Item con Barcode = " + barcode.toString() + " se encuentra prestado", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), R.string.item_with_barcode+ barcode.toString() + R.string.item_with_barcode_onloan, Toast.LENGTH_LONG).show();
                             barcode.clear();
                             return;
                         }
 
                         cursor_loan.close();
                     } else {
-                        Toast.makeText(getContext(), "EL Item con Barcode = " + barcode.toString() + " no existe", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), R.string.item_with_barcode + barcode.toString() +R.string.item_with_barcode_notExists, Toast.LENGTH_LONG).show();
                         barcode.clear();
                         return;
                     }
 
                 } else {
-                    Toast.makeText(getContext(), "Rellene el campo Barcode", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.warning_barcode_empty, Toast.LENGTH_LONG).show();
                     barcode.clear();
                     return;
                 }
                 Log.d(TAG, barcode.toString());
 
                 //Comprobar fecha
-
                 Editable date = ((EditText) aux.findViewById(R.id.member_dialog_date)).getText();
                 if (!date.toString().equals("")) {
 
@@ -195,17 +187,18 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                     Calendar calendar = Calendar.getInstance();
                     input = dateFormat.parse(date.toString(), error);
                     today = calendar.getTime();
+
                     if (error.getErrorIndex() != -1) {
-                        Toast.makeText(getContext(), "EL formato de la fecha no es correcto", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), R.string.warning_date_format, Toast.LENGTH_LONG).show();
                         date.clear();
                         return;
                     } else if (!input.after(today)) {
-                        Toast.makeText(getContext(), "La fecha introducida es incorrecta", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), R.string.warning_date_notvalid, Toast.LENGTH_LONG).show();
                         date.clear();
                         return;
                     }
                 } else {
-                    Toast.makeText(getContext(), "Rellene el campo Date", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.warning_date_empty, Toast.LENGTH_LONG).show();
                     date.clear();
                     return;
                 }
@@ -220,8 +213,7 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                 cursor_member.moveToFirst();
 
                 ContentValues values = new ContentValues();
-                values.put(DatabaseConstants.Loan.START_OF_LOAN, dateFormat.format(today));
-                values.put(DatabaseConstants.Loan.END_OF_LOAN, dateFormat.format(today));
+                values.put(DatabaseConstants.Loan.END_OF_LOAN, dateFormat.format(input));
                 values.put(DatabaseConstants.Loan.MEMBER, cursor_member.getInt(cursor_member.getColumnIndex(DatabaseConstants.Member.ID)));
                 values.put(DatabaseConstants.Loan.ITEM, cursor_item.getInt(cursor_item.getColumnIndex(DatabaseConstants.Item.ID)));
                 Uri out = getActivity().getContentResolver().insert(
@@ -230,7 +222,7 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                 );
                 cursor_member.close();
                 cursor_item.close();
-                Toast.makeText(getContext(), "Prestamo Creado", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.loan_created, Toast.LENGTH_LONG).show();
                 barcode.clear();
                 date.clear();
             }
@@ -303,7 +295,7 @@ public class MemberList extends ListFragment implements LoaderManager.LoaderCall
                 if(str != null && item_barcode != null)
                     item_barcode.setText(str); //Colocamos el texto en el campo
                 else
-                    Toast.makeText(getContext(), "No se reconoce ningún código de barras code_39", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.code_bar_not_recognized, Toast.LENGTH_LONG).show();
                 break;
             default:
                 throw new UnsupportedOperationException();
