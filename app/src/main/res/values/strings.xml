@@ -110,4 +110,8 @@
     <string name="add_item_resource">Dueño :</string>
     <string name="add_item_add_button">Añadir</string>
     <string name="add_item_cancel_button">Cancelar</string>
+    <string name="member_dialog_name">Nombre:</string>
+    <string name="member_dialog_lastname">Apellidos:</string>
+    <string name="member_dialog_email">E-Mail:</string>
+    <string name="memeber_dialog_enddate">Fecha Fin:</string>
 </resources>
